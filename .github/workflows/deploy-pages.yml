@@ -1,7 +1,5 @@
 name: Deploy Mineral Lab to GitHub Pages
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
