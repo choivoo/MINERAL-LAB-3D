@@ -26,7 +26,7 @@ jobs:
           from pathlib import Path
           import re,subprocess
           html=Path('index.html').read_text()
-          for f in ('mineral_models.js','mineral_compare.js','cod_crystals.js','manifest.webmanifest'):
+          for f in ('mineral_models.js','mineral_compare.js','cod_crystals.js','manifest.webmanifest','sw.js'):
               assert './'+f in html, 'HTML missing asset '+f
               assert Path(f).exists(), 'Asset missing: '+f
           for attrs,body in re.findall(r'<script([^>]*)>(.*?)</script>',html,re.S):
@@ -38,7 +38,7 @@ jobs:
       - name: Stage app without awaiting COD service
         run: |
           mkdir -p _site
-          cp index.html manifest.webmanifest cod_crystals.js mineral_models.js mineral_compare.js _site/
+          cp index.html manifest.webmanifest cod_crystals.js mineral_models.js mineral_compare.js sw.js structure-report.json _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
