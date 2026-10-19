@@ -1,0 +1,31 @@
+name: Test Mineral Lab web app in Chromium
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'mineral_models.js'
+      - 'mineral_compare.js'
+      - 'cod_crystals.js'
+      - 'tests/smoke.cjs'
+      - '.github/workflows/smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Start website
+        run: |
+          python3 -m http.server 8765 &
+          sleep 2
+      - name: Test live DOM, 22 CIF structures, 3D comparison and runtime
+        run: node tests/smoke.cjs
