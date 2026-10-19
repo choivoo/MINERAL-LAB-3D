@@ -30,7 +30,7 @@ TARGETS={
 }
 def read(url):
  req=Request(url,headers={'User-Agent':'MineralLab3D/4.0 educational CC0 crystal importer'})
- return urlopen(req,timeout=11).read(2000000).decode('utf-8','replace')
+ return urlopen(req,timeout=5).read(2000000).decode('utf-8','replace')
 def get_record(cid,name,formula):
  url='https://www.crystallography.net/cod/%s.cif'%cid
  block=gemmi.cif.read_string(read(url)).sole_block()
@@ -54,7 +54,7 @@ def candidates(name,pinned):
  ids=list(pinned)
  try:
   response=read('https://www.crystallography.net/cod/result?text='+quote(name)+'&format=lst')
-  ids+= [int(v.strip()) for v in response.splitlines() if re.fullmatch(r'\d{7}',v.strip())][:5]
+  ids+= [int(v.strip()) for v in response.splitlines() if re.fullmatch(r'\d{7}',v.strip())][:2]
  except Exception as exc:print('Search failed:',name,exc)
  return list(dict.fromkeys(ids))
 result={};failed={}
