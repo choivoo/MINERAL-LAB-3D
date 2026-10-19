@@ -21,11 +21,12 @@ jobs:
       - name: Validate JavaScript and HTML references
         run: |
           node --check mineral_models.js
+          node --check --input-type=module < mineral_compare.js
           python - <<'PY'
           from pathlib import Path
           import re,subprocess
           html=Path('index.html').read_text()
-          for f in ('mineral_models.js','cod_crystals.js','manifest.webmanifest'):
+          for f in ('mineral_models.js','mineral_compare.js','cod_crystals.js','manifest.webmanifest'):
               assert './'+f in html, 'HTML missing asset '+f
               assert Path(f).exists(), 'Asset missing: '+f
           for attrs,body in re.findall(r'<script([^>]*)>(.*?)</script>',html,re.S):
@@ -37,7 +38,7 @@ jobs:
       - name: Stage app without awaiting COD service
         run: |
           mkdir -p _site
-          cp index.html manifest.webmanifest cod_crystals.js mineral_models.js _site/
+          cp index.html manifest.webmanifest cod_crystals.js mineral_models.js mineral_compare.js _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
