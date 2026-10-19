@@ -28,11 +28,35 @@ function create(THREE,mineral){
  const group=new THREE.Group(),style=TYPE[mineral.id]||'cubic';
  const color=new THREE.Color(mineral.color);
  const metallic=['pyrite','chalcopyrite','galena','hematite','magnetite'].includes(mineral.id);
+ // Deterministic fine crystal growth striations, color zoning and surface micro-roughness.
+ // Procedural appearance only; not measured spectral/SEM data.
+ const c=document.createElement('canvas');c.width=c.height=256;
+ const cx=c.getContext('2d',{willReadFrequently:true});
+ const textureData=cx.createImageData(256,256);
+ const isStriped=['malachite','azurite','quartz','gypsum','sulfur','aragonite','pyrite'].includes(mineral.id);
+ const isGrainy=['hematite','magnetite','galena','chalcopyrite','cuprite','siderite'].includes(mineral.id);
+ const rnd=new Float32Array(256*256);
+ for(let i=0;i<rnd.length;i++)rnd[i]=rand();
+ for(let y=0;y<256;y++)for(let x=0;x<256;x++){
+   const i=y*256+x;
+   const ring=isStriped?Math.sin(y*.29+x*.035+Math.sin(x*.035)*2)*.18:0;
+   const grain=(rnd[i]-.5)*(isGrainy?.66:.28);
+   const band=Math.sin(y*.052+x*.012)*.12;
+   const v=Math.round(128+105*(ring+grain+band));
+   textureData.data[i*4]=v;textureData.data[i*4+1]=v;
+   textureData.data[i*4+2]=v;textureData.data[i*4+3]=255;
+ }
+ cx.putImageData(textureData,0,0);
+ const surfaceMap=new THREE.CanvasTexture(c);
+ surfaceMap.wrapS=surfaceMap.wrapT=THREE.RepeatWrapping;
+ surfaceMap.repeat.set(2,2);
+ surfaceMap.colorSpace=THREE.NoColorSpace;
  const material=new THREE.MeshPhysicalMaterial({
-  color,metalness:metallic?.56:.09,roughness:metallic?.22:.1,
+  color,metalness:metallic?.56:.09,roughness:metallic?.24:.13,
+  bumpMap:surfaceMap,bumpScale:isGrainy?.045:isStriped?.019:.012,roughnessMap:surfaceMap,
   transmission:metallic?0:(['quartz','fluorite','halite','sylvite','calcite','gypsum','sulfur'].includes(mineral.id)?.32:.08),
   thickness:.9,ior:1.48,clearcoat:1,clearcoatRoughness:.09,
-  emissive:color.clone().multiplyScalar(.13),emissiveIntensity:.32,
+  emissive:color.clone().multiplyScalar(.10),emissiveIntensity:.21,
   transparent:true,opacity:.96,side:THREE.DoubleSide,flatShading:true
  });
  const make=(geo,x,y,z,sz=1,rx=0,ry=0,rz=0)=>{
@@ -85,7 +109,7 @@ function create(THREE,mineral){
  default:
   core=new THREE.IcosahedronGeometry(1.3,0);make(core,0,0,0,1);
  }
- group.userData={mineralId:mineral.id,style,source:'결정 습성 기반 교육용 외형 모델 (실제 개별 표본 스캔 아님)'};
+ group.userData={mineralId:mineral.id,style,surfaceMap,source:'결정 습성 기반 교육용 외형 모델 (실제 개별 표본 스캔 아님)'};
  group.scale.setScalar(.0001);
  return group;
 }
