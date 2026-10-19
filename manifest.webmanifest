@@ -1,0 +1,10 @@
+{
+  "name": "MINERAL LAB 3D",
+  "short_name": "Mineral Lab",
+  "description": "원자와 광물 결정 구조를 관찰하는 교육용 3D 시뮬레이터",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f8f6",
+  "theme_color": "#f7f8f6",
+  "lang": "ko"
+}
