@@ -31,6 +31,7 @@ jobs:
           cp index.html _site/index.html
           cp manifest.webmanifest _site/manifest.webmanifest
           cp cod_crystals.js _site/cod_crystals.js
+          cp mineral_models.js _site/mineral_models.js
           cp structure-report.json _site/structure-report.json || true
           touch _site/.nojekyll
       - name: Configure GitHub Pages
