@@ -76,6 +76,6 @@ with ThreadPoolExecutor(max_workers=5) as pool:
   key,record,issue=future.result()
   if record is not None:result[key]=record
   else:failed[key]=issue
-Path('cod_crystals.js').write_text('window.COD_CRYSTALS='+json.dumps(result,separators=(',',':'))+';\\n',encoding='utf-8')
+Path('cod_crystals.js').write_text('window.COD_CRYSTALS='+json.dumps(result,separators=(',',':'))+';',encoding='utf-8')
 Path('structure-report.json').write_text(json.dumps({'verified':list(result),'unverified':failed},indent=2),encoding='utf-8')
 print('VERIFIED',len(result),'of',len(TARGETS),'additional crystal structures')
