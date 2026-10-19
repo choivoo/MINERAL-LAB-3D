@@ -1,0 +1,118 @@
+{
+  "total_minerals": 22,
+  "verified_count": 22,
+  "verified": {
+    "siderite": {
+      "source": "https://www.crystallography.net/cod/9000098.cif",
+      "sourceId": 9000098,
+      "sites": 30
+    },
+    "rhodochrosite": {
+      "source": "https://www.crystallography.net/cod/9000097.cif",
+      "sourceId": 9000097,
+      "sites": 30
+    },
+    "magnesite": {
+      "source": "https://www.crystallography.net/cod/9000096.cif",
+      "sourceId": 9000096,
+      "sites": 30
+    },
+    "calcite": {
+      "source": "https://www.crystallography.net/cod/9000095.cif",
+      "sourceId": 9000095,
+      "sites": 30
+    },
+    "aragonite": {
+      "source": "https://www.crystallography.net/cod/2103119.cif",
+      "sourceId": 2103119,
+      "sites": 20
+    },
+    "dolomite": {
+      "source": "https://www.crystallography.net/cod/1200014.cif",
+      "sourceId": 1200014,
+      "sites": 30
+    },
+    "fluorite": {
+      "source": "https://www.crystallography.net/cod/1000043.cif",
+      "sourceId": 1000043,
+      "sites": 12
+    },
+    "smithsonite": {
+      "source": "https://www.crystallography.net/cod/9000099.cif",
+      "sourceId": 9000099,
+      "sites": 30
+    },
+    "sylvite": {
+      "source": "https://www.crystallography.net/cod/9003112.cif",
+      "sourceId": 9003112,
+      "sites": 8
+    },
+    "chalcopyrite": {
+      "source": "https://www.crystallography.net/cod/1010940.cif",
+      "sourceId": 1010940,
+      "sites": 16
+    },
+    "cuprite": {
+      "source": "https://www.crystallography.net/cod/1000063.cif",
+      "sourceId": 1000063,
+      "sites": 6
+    },
+    "malachite": {
+      "source": "https://www.crystallography.net/cod/5000043.cif",
+      "sourceId": 5000043,
+      "sites": 40
+    },
+    "azurite": {
+      "source": "https://www.crystallography.net/cod/9007013.cif",
+      "sourceId": 9007013,
+      "sites": 30
+    },
+    "quartz": {
+      "source": "https://www.crystallography.net/cod/9011495.cif",
+      "sourceId": 9011495,
+      "sites": 9
+    },
+    "hematite": {
+      "source": "https://www.crystallography.net/cod/9015503.cif",
+      "sourceId": 9015503,
+      "sites": 30
+    },
+    "magnetite": {
+      "source": "https://www.crystallography.net/cod/9007644.cif",
+      "sourceId": 9007644,
+      "sites": 56
+    },
+    "halite": {
+      "source": "https://www.crystallography.net/cod/9000629.cif",
+      "sourceId": 9000629,
+      "sites": 8
+    },
+    "pyrite": {
+      "source": "https://www.crystallography.net/cod/1534893.cif",
+      "sourceId": 1534893,
+      "sites": 12
+    },
+    "galena": {
+      "source": "https://www.crystallography.net/cod/5000087.cif",
+      "sourceId": 5000087,
+      "sites": 8
+    },
+    "gypsum": {
+      "source": "https://www.crystallography.net/cod/2300258.cif",
+      "sourceId": 2300258,
+      "sites": 48
+    },
+    "sphalerite": {
+      "source": "https://www.crystallography.net/cod/1100043.cif",
+      "sourceId": 1100043,
+      "sites": 8
+    },
+    "sulfur": {
+      "source": "https://www.crystallography.net/cod/1011160.cif",
+      "sourceId": 1011160,
+      "sites": 128
+    }
+  },
+  "unverified": {},
+  "note": "Verified CIF atomic sites; mineral shapes remain representative procedural habits, not measured scans."
+}
