@@ -57,15 +57,25 @@ def candidates(name,pinned):
   ids+= [int(v.strip()) for v in response.splitlines() if re.fullmatch(r'\d{7}',v.strip())][:2]
  except Exception as exc:print('Search failed:',name,exc)
  return list(dict.fromkeys(ids))
-result={};failed={}
-for key,(name,formula,pinned) in TARGETS.items():
+from concurrent.futures import ThreadPoolExecutor,as_completed
+def verify(item):
+ key,(name,formula,pinned)=item
  issue='No verified CIF found'
  for cid in candidates(name,pinned):
   try:
    record=get_record(cid,name,formula)
-   result[key]=record;print('VERIFIED',key,cid,len(record['atoms']));break
-  except Exception as exc:issue=str(exc);print('SKIP',key,cid,issue)
- if key not in result: failed[key]=issue
-Path('cod_crystals.js').write_text('window.COD_CRYSTALS='+json.dumps(result,separators=(',',':'))+';\n',encoding='utf-8')
+   print('VERIFIED',key,cid,len(record['atoms']),flush=True)
+   return key,record,None
+  except Exception as exc:
+   issue=str(exc)
+   print('SKIP',key,cid,issue,flush=True)
+ return key,None,issue
+result={};failed={}
+with ThreadPoolExecutor(max_workers=5) as pool:
+ for future in as_completed([pool.submit(verify,item) for item in TARGETS.items()]):
+  key,record,issue=future.result()
+  if record is not None:result[key]=record
+  else:failed[key]=issue
+Path('cod_crystals.js').write_text('window.COD_CRYSTALS='+json.dumps(result,separators=(',',':'))+';\\n',encoding='utf-8')
 Path('structure-report.json').write_text(json.dumps({'verified':list(result),'unverified':failed},indent=2),encoding='utf-8')
 print('VERIFIED',len(result),'of',len(TARGETS),'additional crystal structures')
