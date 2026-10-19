@@ -71,7 +71,8 @@
 </div>
 <footer class="page-footer"><b>MINERAL LAB</b> · 탐구형 원소·광물 학습 도구 · 오프라인 실행 지원</footer>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<div id="guideModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="modal"><button class="modal-close" id="modalClose" aria-label="닫기">×</button><span class="section-kicker">LAB TUTORIAL</span><h2 id="guideTitle">광물 실험실 이용 가이드</h2><p>직접 원소를 조합하여 광물의 화학식과 결정 형성을 배워 보세요.</p><ol><li>왼쪽 도감에서 만들고 싶은 <b>광물</b>을 선택합니다.</li><li>아래 <b>주기율표</b>에서 필요한 원소를 눌러 원자 수를 모읍니다. ＋/－로 세밀하게 조절할 수도 있습니다.</li><li>필요한 원자가 모두 모이면 <b>결정 만들기</b>를 눌러 단위격자 층이 나타나는 교육용 성장 애니메이션을 관찰합니다.</li><li><b>완성 광물</b> 탭에서 결정 모형을 자유롭게 회전하고 확대할 수 있습니다.</li><li>새 광물을 발견하면 도감에 기록이 남습니다.</li></ol><p style="font-size:11px;color:#9aaaa3">※ 이 앱은 영상의 사용 경험을 재구성한 독립적인 교육용 시뮬레이터입니다. 5종은 결정학 좌표 기반이고, 나머지는 조성 비율 개념도입니다. 성장 속도는 실제 화학반응의 속도가 아닙니다.</p><button id="startGuideBtn" class="primary-btn modal-cta">실험 시작하기 →</button></div></div>
+<div id="guideModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="modal"><button class="modal-close" id="modalClose" aria-label="닫기">×</button><span class="section-kicker">LAB TUTORIAL</span><h2 id="guideTitle">광물 실험실 이용 가이드</h2><p>직접 원소를 조합하여 광물의 화학식과 결정 형성을 배워 보세요.</p><ol><li>왼쪽 도감에서 만들고 싶은 <b>광물</b>을 선택합니다.</li><li>아래 <b>주기율표</b>에서 필요한 원소를 눌러 원자 수를 모읍니다. ＋/－로 세밀하게 조절할 수도 있습니다.</li><li>필요한 원자가 모두 모이면 <b>결정 만들기</b>를 눌러 단위격자 층이 나타나는 교육용 성장 애니메이션을 관찰합니다.</li><li><b>완성 광물</b> 탭에서 결정 모형을 자유롭게 회전하고 확대할 수 있습니다.</li><li>새 광물을 발견하면 도감에 기록이 남습니다.</li></ol><p style="font-size:11px;color:#9aaaa3">※ 이 앱은 영상의 사용 경험을 재구성한 독립적인 교육용 시뮬레이터입니다. 실제 원자 좌표가 검증된 광물만 결정학 모델로 표시됩니다. 미검증 광물은 조성 개념도로 구분합니다. 성장 속도는 실제 화학반응의 속도가 아닙니다.</p><button id="startGuideBtn" class="primary-btn modal-cta">실험 시작하기 →</button></div></div>
+<script src="./cod_crystals.js"></script>
 <script>
 /* MINERAL LAB 2.0 - crystallographic prototypes.
    Fractional coordinates are conventional unit-cell coordinates, not pixels.
@@ -95,6 +96,8 @@
   const validCells=n=>Math.max(1,Math.min(3,Math.round(Number(n)||1)));
   function build(mineral, cells=2) {
     const n=validCells(cells), spec=modes[mineral.id];
+    const measured=window.COD_CRYSTALS?.[mineral.id];
+    if(measured)return buildMeasured(mineral,n,measured);
     if(!spec) return approximate(mineral,n);
     const a=spec.latticeA, atoms=[];
     for(let z=0;z<n;z++)for(let y=0;y<n;y++)for(let x=0;x<n;x++)for(const site of spec.basis){
@@ -113,6 +116,47 @@
     }
     return {accurate:true,atoms,bonds,bounds,settings:spec,latticeA:a,cellCount:n};
   }
+  function buildMeasured(mineral,n,rec){
+  const [a,b,c,alpha,beta,gamma]=rec.lattice;
+  const A=alpha*Math.PI/180,B=beta*Math.PI/180,G=gamma*Math.PI/180;
+  const sinG=Math.sin(G),cosG=Math.cos(G),cosB=Math.cos(B),cosA=Math.cos(A);
+  if(!sinG) return approximate(mineral,n);
+  const yy=(cosA-cosB*cosG)/sinG;
+  const vz=Math.sqrt(Math.max(0,1-cosB*cosB-yy*yy));
+  const vectors=[[a,0,0],[b*cosG,b*sinG,0],[c*cosB,c*yy,c*vz]];
+  const scale=Math.max(a,b,c),atoms=[];
+  for(let iz=0;iz<n;iz++)for(let iy=0;iy<n;iy++)for(let ix=0;ix<n;ix++)
+    for(const [sym,px,py,pz] of rec.atoms){
+      const f=[ix+px,iy+py,iz+pz];
+      const x=f[0]*vectors[0][0]+f[1]*vectors[1][0]+f[2]*vectors[2][0];
+      const y=f[1]*vectors[1][1]+f[2]*vectors[2][1];
+      const z=f[2]*vectors[2][2];
+      atoms.push({symbol:sym,x:x/scale,y:y/scale,z:z/scale,cell:[ix,iy,iz]});
+    }
+  if(!atoms.length||atoms.length>12500)return approximate(mineral,n);
+  const ranges=['x','y','z'].map(k=>{const v=atoms.map(q=>q[k]);return [Math.min(...v),Math.max(...v)]});
+  const bounds=Math.max(1,...ranges.map(v=>v[1]-v[0]))+0.5;
+  for(const p of atoms){p.x+=bounds/2-(ranges[0][0]+ranges[0][1])/2;p.y+=bounds/2-(ranges[1][0]+ranges[1][1])/2;p.z+=bounds/2-(ranges[2][0]+ranges[2][1])/2}
+  let cutoff=0.45,nearest=Infinity,bonds=[];
+  if(atoms.length<700){
+    for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){
+      if(atoms[i].symbol===atoms[j].symbol&&Object.keys(mineral.need).length>1)continue;
+      const d=Math.hypot(atoms[i].x-atoms[j].x,atoms[i].y-atoms[j].y,atoms[i].z-atoms[j].z);
+      if(d>0.01)nearest=Math.min(nearest,d);
+    }
+    cutoff=Math.min(nearest*1.12,0.56);
+    for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){
+      if(atoms[i].symbol===atoms[j].symbol&&Object.keys(mineral.need).length>1)continue;
+      const d=Math.hypot(atoms[i].x-atoms[j].x,atoms[i].y-atoms[j].y,atoms[i].z-atoms[j].z);
+      if(d>.01&&d<=cutoff&&bonds.length<5000)bonds.push([i,j]);
+    }
+  }
+  return {accurate:true,atoms,bonds,bounds,cellCount:n,latticeA:scale,
+   settings:{name:'COD 검증된 CIF 원자 좌표',spaceGroup:rec.spaceGroup||'CIF 참조',crystalSystem:'원본 CIF 참조',
+    latticeA:a,cellLabel:'a='+a+' b='+b+' c='+c+' Å · 각도 '+alpha+'/'+beta+'/'+gamma+'°',
+    coordination:'가까운 원자 간 거리 기반 시각화 (화학 결합 판정 아님)',source:rec.source}};
+}
+
   function approximate(mineral,n=2){
     // Intentionally does not imitate a mineral's real crystal lattice.
     // The symbols follow exactly the empirical formula, repeated as visually arranged groups.
