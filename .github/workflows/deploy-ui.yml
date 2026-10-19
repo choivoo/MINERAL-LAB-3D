@@ -18,6 +18,22 @@ jobs:
       url: ${{ steps.publish.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Validate JavaScript and HTML references
+        run: |
+          node --check mineral_models.js
+          python - <<'PY'
+          from pathlib import Path
+          import re,subprocess
+          html=Path('index.html').read_text()
+          for f in ('mineral_models.js','cod_crystals.js','manifest.webmanifest'):
+              assert './'+f in html, 'HTML missing asset '+f
+              assert Path(f).exists(), 'Asset missing: '+f
+          for attrs,body in re.findall(r'<script([^>]*)>(.*?)</script>',html,re.S):
+              if 'src=' in attrs or 'importmap' in attrs or not body.strip():continue
+              args=['node','--check','--input-type=module' if 'type="module"' in attrs else '--input-type=commonjs']
+              subprocess.run(args,input=body,text=True,check=True)
+          print('All inline JavaScript blocks parse successfully')
+          PY
       - name: Stage app without awaiting COD service
         run: |
           mkdir -p _site
