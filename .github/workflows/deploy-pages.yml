@@ -27,6 +27,8 @@ jobs:
           touch _site/.nojekyll
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
