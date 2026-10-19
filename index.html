@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f8f6">
+<meta name="description" content="원소를 모아 광물을 합성하고 결정을 관찰하는 인터랙티브 화학 실험실">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>MINERAL LAB 2.0 | 3D 광물 실험실</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<style>
+:root {--bg:#f6f8f6;--panel:#ffffff;--border:#e4eae6;--text:#233b3e;--muted:#849394;--brand:#287b6c;--brand-dark:#18594f;--brand-faint:#e5f5ed;--stage:#1b3a4c;--shadow:0 12px 30px rgba(20,57,57,.045);font-family: 'Pretendard','SUIT',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.36}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #60be9b;outline-offset:2px}.hidden{display:none!important}
+.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid var(--border);padding:0 30px;gap:16px}.brand{display:flex;align-items:center;gap:13px;min-width:0}.brand-logo{display:grid;place-items:center;width:39px;height:39px;background:#dff6ec;color:var(--brand);border-radius:13px;font-size:24px}.brand-title{font-weight:900;letter-spacing:.11em;font-size:16px}.brand-sub{font-size:11px;color:var(--muted);letter-spacing:.025em;margin-top:2px}.top-right{display:flex;align-items:center;gap:11px}.top-progress{min-width:165px;font-weight:700;font-size:12px;color:#778789;display:flex;align-items:center;gap:10px}.tiny-progress{width:83px;height:6px;background:#e6eceb;border-radius:30px;overflow:hidden}.tiny-progress>span{height:100%;display:block;width:0%;background:#2b9c83;transition:width .3s}.outline-btn,.icon-btn{border:1px solid var(--border);background:#fff;color:#4b6567;border-radius:10px;min-height:34px;padding:8px 13px;font-weight:700;font-size:12px}.outline-btn:hover,.icon-btn:hover{background:#edf6f1;border-color:#b9dacf}.menu-trigger{display:none}
+.app-shell{max-width:1860px;margin:0 auto;padding:22px 24px 38px;display:grid;grid-template-columns:265px minmax(550px,1fr) 285px;grid-template-rows:auto auto;gap:19px;align-items:start}.card{background:var(--panel);border:1px solid var(--border);border-radius:17px;box-shadow:var(--shadow)}.catalog{grid-row:1 / span 2;min-height:770px;padding:20px 12px 14px;position:sticky;top:12px}.section-kicker{color:#81a095;text-transform:uppercase;font-size:10px;font-weight:900;letter-spacing:.13em}.catalog-head{padding:0 10px 14px}.catalog h2,.atoms-section h2,.periodic-heading h2{margin:7px 0 3px;font-size:19px;letter-spacing:-.05em}.catalog small,.small-help{font-size:11px;color:var(--muted)}.search-wrap{height:39px;border:1px solid var(--border);background:#fafcfb;border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 10px;margin:9px 9px 14px;color:#8e9b99}.search-wrap input{border:0;outline:0;background:transparent;width:100%;min-width:0;color:var(--text);font-size:12px}.filter-tabs{display:flex;gap:4px;padding:0 8px 13px;flex-wrap:wrap}.filter-tabs button{border:0;padding:7px 9px;border-radius:7px;background:none;color:#8c9999;font-size:11px;font-weight:800}.filter-tabs button.active{color:#fff;background:#2d8974}.catalog-count{display:flex;justify-content:space-between;padding:0 12px 9px;font-size:11px;color:#97a4a3}.catalog-list{max-height:calc(100vh - 295px);min-height:525px;overflow:auto;padding:3px 5px 10px;scrollbar-color:#c7d6d2 transparent;scrollbar-width:thin}.mineral-item{width:100%;display:flex;align-items:center;text-align:left;gap:10px;padding:11px 9px;background:#fff;border:1px solid transparent;border-radius:11px;margin-bottom:5px;transition:.18s;position:relative}.mineral-item:hover{background:#f4f9f6}.mineral-item.active{border-color:#b9d5c7;background:#f2faf5;box-shadow:0 0 0 1px #eff5ee}.mineral-item .crystal-swatch{width:43px;height:43px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.mineral-item svg{width:39px;height:39px;filter:drop-shadow(0 3px 3px #24484419)}.mineral-item .mineral-txt{min-width:0;flex:1}.mineral-item b{font-size:12px;font-weight:850;display:block;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mineral-item small{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#9ca7a4}.found-dot{font-size:15px;color:#20a580}
+.main-col{min-width:0}.main-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}.main-heading h1{font-size:22px;letter-spacing:-.055em;margin:4px 0 0}.eyebrow{font-size:11px;font-weight:900;color:#28816c;letter-spacing:.11em}.formula-pill{padding:9px 13px;border:1px solid #cde4d9;background:#eaf7f1;border-radius:10px;font-weight:800;font-size:14px;color:#2f7866;white-space:nowrap}.stage-tabs{display:flex;align-items:center;gap:24px;margin-bottom:12px}.stage-tabs button{background:none;border:0;padding:10px 2px;color:#9ba8a8;font-size:13px;font-weight:800;position:relative}.stage-tabs button.active{color:#27836d}.stage-tabs button.active:after{content:"";height:3px;position:absolute;bottom:0;left:0;right:0;background:#298970;border-radius:4px}.stage-wrap{height:410px;position:relative;background:radial-gradient(ellipse at 51% 42%,#29536b 0,#1d4054 38%,#173549 100%);border-radius:15px;overflow:hidden;isolation:isolate;border:1px solid #4b6971;touch-action:pan-y;box-shadow:inset 0 0 60px #0c293852}.stage-wrap:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#d5f4f40b 1px,transparent 1px),linear-gradient(90deg,#d5f4f40b 1px,transparent 1px);background-size:30px 30px;pointer-events:none}.stage-wrap:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 34%,#0d2d3a44 100%);pointer-events:none}.stage-wrap canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}.stage-status{position:absolute;left:19px;top:18px;z-index:2;color:#d2e5e6;font-size:12px;font-weight:900;display:flex;align-items:center;gap:8px}.status-light{width:7px;height:7px;border-radius:99px;background:#73d9b9;box-shadow:0 0 10px #73d9b9}.stage-tag{position:absolute;right:17px;top:17px;z-index:2;background:#ffffff17;border:1px solid #ffffff20;border-radius:30px;color:#d4ecf0;padding:7px 12px;font-size:10px;font-weight:800;backdrop-filter:blur(8px)}.stage-empty{position:absolute;z-index:2;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;pointer-events:none;padding:50px 20px;transition:opacity .2s}.stage-empty h3{font-size:19px;letter-spacing:-.03em;margin:0 0 9px;color:#f5fbfc}.stage-empty p{margin:0;color:#b4d2d9;font-size:12px}.stage-footer{position:absolute;z-index:2;bottom:17px;width:100%;text-align:center;font-size:11px;color:#b6d0d6;font-weight:700;pointer-events:none}.stage-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:15px 0 25px}.range-set{display:flex;align-items:center;gap:11px;flex:1;max-width:245px}.range-set.right{justify-content:flex-end}.range-set label{font-size:11px;color:#829291;white-space:nowrap}.range-set input{width:112px;accent-color:#2f947e;cursor:pointer}.value-readout{font-size:10px;color:#98a9a5;min-width:28px}.stage-reset{background:#fff;border:1px solid var(--border);border-radius:9px;color:#62837e;font-size:11px;padding:7px 10px;white-space:nowrap}.atoms-section{padding:23px 24px 21px;margin-bottom:15px}.section-title-row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.step-no{font-size:12px;font-weight:900;color:#27927d;margin-right:5px}.atoms-section h2{font-size:18px}.fraction-note{font-size:11px;color:#91a29e}.atom-goals{display:flex;gap:12px;margin:20px 0 11px;flex-wrap:wrap}.atom-goal{display:flex;align-items:center;gap:9px;background:#fbfcfa;border:1px solid #eef0eb;padding:8px 9px;border-radius:12px;min-width:116px;flex:1;max-width:235px}.atom-symbol{width:34px;height:34px;display:grid;place-items:center;flex-shrink:0;border-radius:50%;color:#fff;text-shadow:0 1px 1px #0006;font-weight:900;font-size:13px;border:2px solid #ffffff6e;box-shadow:0 3px 8px #174d5730}.atom-goal .counts{white-space:nowrap;font-weight:850;color:#4b6465;font-size:12px;min-width:30px}.atom-goal .counts.complete{color:#298a64}.goal-actions{display:flex;gap:5px;margin-left:auto}.mini-btn{width:24px;height:24px;border:1px solid #e6eeec;color:#40766a;background:#fff;border-radius:7px;display:grid;place-items:center;font-size:16px;line-height:1}.mini-btn:hover:not(:disabled){background:#e3f5e8}.atom-hint{font-size:12px;color:#8fa09d;margin:0 0 19px;line-height:1.6}.actions-row{display:flex;align-items:center;gap:11px;flex-wrap:wrap}.primary-btn{border:0;background:#257f6a;color:#fff;border-radius:10px;padding:12px 18px;min-height:44px;font-weight:900;box-shadow:0 5px 11px #2c8a7640;display:flex;align-items:center;gap:9px}.primary-btn:hover:not(:disabled){background:#196b5a}.primary-btn:disabled{background:#b8e4d3;color:white;box-shadow:none}.flat-btn{background:none;border:0;color:#66807d;font-weight:750;padding:10px;font-size:12px}.flat-btn:hover{color:#197866}.speed-label{font-size:11px;color:#94a4a1;margin-left:auto}.speed-picker{border:1px solid var(--border);border-radius:9px;color:#4f7069;background:#fff;padding:10px 8px;font-size:12px;font-weight:800}.grow-progress{margin-top:14px;display:none}.grow-track{height:7px;border-radius:20px;background:#e4eee8;overflow:hidden}.grow-track span{height:100%;display:block;width:0;background:linear-gradient(90deg,#2ca889,#86d4a2);transition:width .08s}.grow-meta{display:flex;justify-content:space-between;font-size:11px;color:#558579;margin:6px 0}.discovery-note{background:#f9fbf8;border:1px solid #edf1e8;border-left:3px solid #bbd5a2;border-radius:10px;margin-top:15px;padding:12px 14px;color:#637574;font-size:12px;line-height:1.65}.discovery-note b{color:#416c5c}
+.inspector{padding:19px 17px;min-width:0}.inspector-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.inspector h2{font-size:16px;margin:4px 0 0}.element-badge{border-radius:8px;background:#eef8f3;padding:6px 9px;font-size:11px;color:#378a75;font-weight:800}.bohr-stage{background:radial-gradient(circle,#294e63,#18394e);border-radius:14px;height:257px;position:relative;overflow:hidden}.bohr-stage canvas{width:100%;height:100%}.bohr-tip{font-size:10px;text-align:center;color:#c2dbe3;position:absolute;bottom:11px;left:0;right:0;pointer-events:none}.element-stats{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:6px;margin-top:17px;padding-bottom:17px;border-bottom:1px solid #e9eeeb}.stat b{display:block;font-size:19px;font-weight:900;margin-bottom:3px}.stat span{font-size:10px;color:#94a39e}.atom-info{margin:20px 0 4px}.atom-info .atomic-heading{font-size:12px;font-weight:850;margin-bottom:8px}.atom-info p{color:#7b9090;font-size:11px;line-height:1.8;margin:0}.inspector .info-note{margin-top:15px;border-top:1px solid var(--border);padding-top:16px;font-size:11px;color:#90a19c;line-height:1.8}.inspector .right-actions{display:flex;gap:8px;margin-top:17px}.inspector .right-actions button{flex:1;padding:10px 7px;border-radius:9px;font-weight:850;font-size:11px}.ghost-green{background:#edf8f2;border:1px solid #d5eade;color:#278269}.ghost-white{background:#fff;border:1px solid var(--border);color:#6a807d}
+.periodic{grid-column:2 / span 2;padding:21px 24px 18px;min-width:0;overflow:hidden}.periodic-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}.periodic-heading h2{font-size:17px}.periodic-filters{display:flex;gap:15px;align-items:center;font-size:11px;color:#80908c}.periodic-filters label{display:flex;align-items:center;gap:5px;cursor:pointer}.periodic-filters input{accent-color:#2d9279}.element-search{width:140px;min-height:32px;border:1px solid var(--border);border-radius:8px;padding:7px 9px;background:#fff;color:var(--text);font-size:11px}.ptable-scroll{overflow-x:auto;scrollbar-color:#d2ded9 transparent;padding-bottom:7px}.periodic-grid{display:grid;grid-template-columns:repeat(18,minmax(42px,1fr));grid-template-rows:repeat(10,54px);gap:4px;min-width:850px}.element-tile{border:1px solid #dbe6e5;border-radius:8px;padding:3px 4px;position:relative;text-align:left;min-width:0;overflow:hidden;transition:.14s;box-shadow:0 2px 0 #00000004}.element-tile:hover{transform:translateY(-2px);box-shadow:0 4px 10px #203c4430;z-index:1;border-color:#749c90}.element-tile.active{outline:2px solid #215f53;outline-offset:1px;z-index:2}.element-tile.dimmed{opacity:.16}.element-tile .num{font-size:9px;font-weight:650;position:absolute;left:4px;top:3px;opacity:.75}.element-tile .sym{font-size:18px;font-weight:950;display:block;text-align:center;margin-top:8px}.element-tile .kor{font-size:9px;display:block;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-1px}.element-tile .need-corner{position:absolute;top:2px;right:4px;background:#1b9275;color:white;font-size:8px;border-radius:30px;padding:1px 3px}.element-tile[data-type="nonmetal"]{background:#e3f2f9;color:#335c73}.element-tile[data-type="noble"]{background:#ede5fa;color:#6d5a88}.element-tile[data-type="halogen"]{background:#e7f2ff;color:#426894}.element-tile[data-type="alkali"]{background:#fce3df;color:#9b5e53}.element-tile[data-type="alkaline"]{background:#fbf1d9;color:#806d46}.element-tile[data-type="transition"]{background:#f4ede3;color:#79624d}.element-tile[data-type="post"]{background:#e9eee5;color:#63725b}.element-tile[data-type="metalloid"]{background:#e8f5df;color:#4b7c4f}.element-tile[data-type="lanthanide"]{background:#f4e4f1;color:#925f86}.element-tile[data-type="actinide"]{background:#f9e7e5;color:#986c69}.periodic-legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:14px;color:#80918e;font-size:10px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:middle}.periodic-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}.periodic-bottom p{font-size:10px;color:#a0adaa;margin:0}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,25px);background:#194a43;color:white;padding:13px 19px;border-radius:12px;box-shadow:0 12px 35px #102f3455;opacity:0;z-index:50;transition:.25s;pointer-events:none;font-weight:700;font-size:12px;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#0e292b88;backdrop-filter:blur(3px);z-index:70;display:grid;place-items:center;padding:14px}.modal{width:min(100%,480px);background:white;border-radius:20px;padding:27px 30px;position:relative;box-shadow:0 20px 70px #0c2c3c52}.modal h2{font-size:22px;margin:8px 0 16px}.modal p,.modal li{font-size:13px;line-height:1.9;color:#57706d}.modal ol{padding-left:21px}.modal-close{position:absolute;right:20px;top:18px;border:0;border-radius:8px;background:#edf5f0;padding:6px 10px;font-size:17px}.modal-cta{margin-top:20px}.page-footer{text-align:center;font-size:11px;color:#9baaaa;margin:0 0 20px}.page-footer b{color:#6d8580}
+@media(max-width:1400px){.app-shell{grid-template-columns:220px minmax(420px,1fr) 235px;gap:13px;padding:17px}.catalog{padding:14px 7px}.main-heading h1{font-size:20px}.stage-wrap{height:385px}.inspector{padding:14px 11px}.bohr-stage{height:225px}.atom-goals{gap:6px}.atom-goal{min-width:95px;padding:6px}.goal-actions{gap:2px}.periodic{padding:16px}.periodic-grid{grid-template-columns:repeat(18, minmax(38px,1fr));grid-template-rows:repeat(10,51px)}}
+@media(max-width:1050px){.app-shell{grid-template-columns:240px minmax(0,1fr);grid-template-rows:auto auto auto}.catalog{grid-column:1;grid-row:1 / span 3}.main-col{grid-column:2}.inspector{grid-column:2;display:grid;grid-template-columns:230px 1fr;gap:10px 23px}.inspector-header{grid-column:1 / span 2;margin-bottom:2px}.bohr-stage{height:220px}.element-stats{margin-top:0}.inspector .info-note{margin-top:0}.inspector .right-actions{grid-column:2}.periodic{grid-column:2;grid-row:3}.stage-wrap{height:380px}.topbar{padding:0 18px}}
+@media(max-width:700px){.topbar{height:64px;padding:0 14px}.brand-title{font-size:13px}.brand-sub{font-size:10px}.brand-logo{height:36px;width:36px}.top-progress{min-width:0}.top-progress .tiny-progress{display:none}.top-right{gap:6px}.top-right .help-btn{display:none}.top-right .install-btn{display:none}.menu-trigger{display:block}.app-shell{padding:14px 12px 25px;display:flex;flex-direction:column;gap:14px}.catalog{display:none;position:fixed;z-index:60;inset:63px auto 0 0;width:min(310px,85vw);border-radius:0;overflow-y:auto;box-shadow:13px 5px 30px #10374244}.catalog.mobile-open{display:block}.catalog-list{max-height:calc(100dvh - 310px);min-height:300px}.main-col,.inspector,.periodic{width:100%}.main-heading h1{font-size:20px}.formula-pill{padding:7px 9px;font-size:13px}.stage-wrap{height:350px}.stage-controls{margin-bottom:12px}.range-set{gap:4px}.range-set input{width:70px}.atoms-section{padding:17px 14px}.atom-goals{gap:6px;margin-top:15px}.atom-goal{max-width:none;min-width:calc(50% - 4px);flex:1 1 calc(50% - 4px)}.atoms-section h2{font-size:16px}.speed-label{margin-left:0}.inspector{display:grid;grid-template-columns:160px 1fr;gap:12px;padding:13px}.inspector-header{grid-column:1 / span 2}.bohr-stage{height:174px}.element-stats{grid-column:2;align-self:start;padding:20px 0 10px;gap:1px}.stat b{font-size:15px}.stat span{font-size:9px}.atom-info{grid-column:1 / span 2;margin:4px 0}.inspector .info-note{grid-column:1 / span 2;padding-top:8px}.inspector .right-actions{grid-column:1 / span 2;margin:0}.periodic{padding:15px 12px}.periodic-heading{flex-wrap:wrap;gap:8px}.periodic-heading h2{font-size:16px}.periodic-filters{flex-wrap:wrap;gap:8px}.element-search{width:120px}.periodic-grid{grid-template-columns:repeat(18,42px);grid-template-rows:repeat(10,52px)}.page-footer{padding:0 20px;line-height:1.7}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Version 2.0 3D lattice extension */
+.stage-tabs{gap:18px;flex-wrap:wrap}.stage-tabs button{font-size:12px}.stage-wrap{touch-action:none}
+#threeMount{display:none;position:absolute;inset:0;z-index:1;touch-action:none}
+#threeMount canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+.lattice-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:14px 16px;margin:0 0 16px;background:#fdfefd;border:1px solid var(--border);border-radius:13px}
+.lattice-toolbar label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:#637773;font-weight:800;white-space:nowrap}
+.lattice-toolbar input[type=checkbox]{accent-color:#218673}
+.lattice-toolbar select{border:1px solid var(--border);padding:7px;border-radius:8px;background:#fff;color:#436860;font-size:11px}
+.lattice-badge{font-size:10px;font-weight:900;padding:6px 9px;border-radius:9px;color:#276e5b;background:#e4f6ec;white-space:nowrap}
+.lattice-badge.concept{background:#fff0da;color:#a07841}
+.lattice-detail{display:flex;flex-wrap:wrap;gap:8px 18px;color:#6e8d88;font-size:11px;line-height:1.55;margin:-5px 0 14px;padding:0 5px}
+.lattice-detail b{color:#365c58}.lattice-source{font-size:10px;color:#2c877b;text-decoration:underline}
+@media(max-width:700px){.lattice-toolbar{gap:6px;padding:10px 9px}.lattice-toolbar label{font-size:10px}.stage-tabs{gap:13px}.stage-tabs button{font-size:12px}.lattice-detail{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand"><div class="brand-logo" aria-hidden="true">⬡</div><div><div class="brand-title">MINERAL LAB <span style="color:#2b8a70">2.0</span></div><div class="brand-sub">원자로 시작하는 나만의 광물 실험실</div></div></div>
+ <div class="top-right"><div class="top-progress"><span id="discoveryCount">0 / 22 발견</span><div class="tiny-progress"><span id="topProgress"></span></div></div><button id="installBtn" class="outline-btn install-btn" style="display:none">앱 설치</button><button id="guideBtn" class="outline-btn help-btn">? 사용 가이드</button><button id="menuBtn" class="icon-btn menu-trigger" aria-label="광물 목록 열기">☰</button></div>
+</header>
+<div class="app-shell">
+ <aside class="card catalog" id="catalog">
+  <div class="catalog-head"><span class="section-kicker">MINERAL COLLECTION</span><h2>광물 도감</h2><small>실험할 광물을 선택해 보세요.</small></div>
+  <div class="search-wrap"><span>⌕</span><input id="mineralSearch" aria-label="광물 검색" placeholder="광물 이름 또는 화학식 검색" autocomplete="off"><span>⌘</span></div>
+  <nav id="filters" class="filter-tabs" aria-label="광물 종류"><button class="active" data-filter="전체">전체</button><button data-filter="탄산염">탄산염</button><button data-filter="황화물">황화물</button><button data-filter="기타">기타</button></nav>
+  <div class="catalog-count"><span id="catalogCount">광물 목록</span><span>실험 도감</span></div><div id="mineralList" class="catalog-list"></div>
+ </aside>
+ <main class="main-col">
+  <div class="main-heading"><div><span class="eyebrow">01 · 실험 대상 광물</span><h1 id="mineralTitle">능망간석</h1></div><div class="formula-pill" id="mineralFormula">MnCO₃</div></div>
+  <div class="stage-tabs" role="tablist"><button id="atomsTab" class="active" aria-selected="true">원자 배열</button><button id="crystalTab" aria-selected="false">완성 광물</button><button id="latticeTab" aria-selected="false">3D 결정 격자</button></div>
+  <section class="stage-wrap" id="stageWrap" aria-label="원자와 결정 시뮬레이션"><canvas id="stageCanvas"></canvas><div id="threeMount" aria-label="Three.js 원자 구조 3D 화면"></div><div class="stage-status"><span class="status-light"></span><span id="stageStatus">재료를 기다리는 중</span></div><div class="stage-tag" id="stageTag">조성 비율 반복 모형</div><div class="stage-empty" id="stageEmpty"><h3>작은 원자들이 만날 자리</h3><p id="emptyText">주기율표에서 원자를 골라 볼까요?</p></div><div class="stage-footer" id="stageFooter">원자를 모은 뒤 결정 만들기를 눌러요. 관찰한 모드도 사용할 수 있어요.</div></section>
+  <div class="stage-controls"><div class="range-set"><label for="rotationRange">회전</label><input type="range" id="rotationRange" min="0" max="360" value="25" aria-label="모형 회전"><span class="value-readout" id="rotateValue">25°</span></div><button class="stage-reset" id="resetViewBtn" title="보기 초기화">↺ 보기 초기화</button><div class="range-set right"><label for="zoomRange">확대</label><input type="range" id="zoomRange" min="55" max="170" value="100" aria-label="모형 확대"><span class="value-readout" id="zoomValue">100%</span></div></div>
+  <div class="lattice-toolbar" aria-label="3D 격자 관찰 설정"><span class="lattice-badge" id="accuracyBadge">좌표 검증 중</span>
+<label>반복 셀 <select id="cellCount" aria-label="단위격자 반복 횟수"><option value="1">1 × 1 × 1</option><option value="2" selected>2 × 2 × 2</option><option value="3">3 × 3 × 3</option></select></label>
+<label><input type="checkbox" id="bondToggle" checked> 이웃 연결선</label><label><input type="checkbox" id="axesToggle" checked> 격자 경계</label>
+<label><input type="checkbox" id="spinToggle"> 자동 회전</label>
+</div><div class="lattice-detail" id="latticeDetail" aria-live="polite"></div>
+<section class="card atoms-section"><div class="section-title-row"><h2><span class="step-no">02.</span> 필요한 원자 모으기</h2><span class="fraction-note" id="fractionNote">0개 수집 / 5개 필요</span></div><div id="atomGoals" class="atom-goals"></div><p class="atom-hint" id="atomHint">아래 주기율표에서 필요한 원소를 찾아 눌러 보세요.</p>
+   <div class="actions-row"><button id="synthesizeBtn" class="primary-btn" disabled>결정 만들기 <span>▶</span></button><button id="clearBtn" class="flat-btn">재료 비우기 ↺</button><button id="fillAllBtn" class="flat-btn">자동 채우기 ＋</button><span class="speed-label">성장 속도</span><select class="speed-picker" id="speedSelect" aria-label="결정 성장 속도"><option value=".5">느림 0.5×</option><option value="1" selected>보통 1×</option><option value="2">빠름 2×</option><option value="4">초고속 4×</option></select></div>
+   <div class="grow-progress" id="growProgress"><div class="grow-meta"><span>결정 성장 중...</span><strong id="growPercent">0%</strong></div><div class="grow-track"><span id="growFill"></span></div></div>
+   <div class="discovery-note"><b>발견 노트 · </b><span id="mineralNote">망가니즈가 들어 있는 탄산염 광물이에요.</span></div>
+  </section>
+ </main>
+ <aside class="card inspector"><div class="inspector-header"><div><span class="section-kicker">ATOM INSPECTOR</span><h2>원자 구조 관찰</h2></div><span class="element-badge" id="elementBadge">산소 · O</span></div><div class="bohr-stage"><canvas id="bohrCanvas" aria-label="원자 전자껍질 모형"></canvas><div class="bohr-tip">원자핵과 전자껍질을 단순화한 모형</div></div><div class="element-stats"><div class="stat"><b id="protons">8</b><span>양성자</span></div><div class="stat"><b id="neutrons">8</b><span>중성자(단순 추정)</span></div><div class="stat"><b id="electrons">8</b><span>전자</span></div></div><div class="atom-info"><div class="atomic-heading" id="elementInfoTitle">산소 · 8번 원소</div><p id="elementInfoBody">전자껍질: 2 · 6</p></div><div class="info-note">실제 전자는 일정한 궤도를 따라 도는 작은 공이 아닙니다. 학습을 돕기 위해 보어 모형으로 단순화해 나타냈습니다.</div><div class="right-actions"><button class="ghost-green" id="addSelectedBtn">원자 +1</button><button class="ghost-white" id="fillSelectedBtn">이 원소 채우기</button></div></aside>
+ <section class="card periodic"><div class="periodic-heading"><div><span class="section-kicker">PERIODIC TABLE</span><h2>주기율표에서 재료를 찾아요</h2><div class="small-help">원소를 누르면 원자 정보가 나타나고, 필요한 원자라면 하나 추가돼요.</div></div><div class="periodic-filters"><label><input id="onlyNeeded" type="checkbox"> 필요한 원소만</label><input id="elementSearch" class="element-search" placeholder="이름/기호 검색" aria-label="원소 검색"></div></div><div class="ptable-scroll"><div id="periodicGrid" class="periodic-grid"></div></div><div class="periodic-legend"><span><i class="legend-dot" style="background:#e3f2f9"></i>비금속</span><span><i class="legend-dot" style="background:#fce3df"></i>알칼리 금속</span><span><i class="legend-dot" style="background:#f4ede3"></i>전이 금속</span><span><i class="legend-dot" style="background:#e7f2ff"></i>할로젠</span><span><i class="legend-dot" style="background:#ede5fa"></i>비활성 기체</span><span><i class="legend-dot" style="background:#e9eee5"></i>기타 금속</span></div><div class="periodic-bottom"><p>* 일부 광물의 3D 격자는 결정학 자료의 원자 좌표·격자상수를 사용합니다. 성장 속도·연결선은 교육용 시각화이며 분자동역학 계산이 아닙니다.</p><button class="flat-btn" id="resetDiscoveriesBtn">발견 기록 초기화</button></div></section>
+</div>
+<footer class="page-footer"><b>MINERAL LAB</b> · 탐구형 원소·광물 학습 도구 · 오프라인 실행 지원</footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="guideModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="modal"><button class="modal-close" id="modalClose" aria-label="닫기">×</button><span class="section-kicker">LAB TUTORIAL</span><h2 id="guideTitle">광물 실험실 이용 가이드</h2><p>직접 원소를 조합하여 광물의 화학식과 결정 형성을 배워 보세요.</p><ol><li>왼쪽 도감에서 만들고 싶은 <b>광물</b>을 선택합니다.</li><li>아래 <b>주기율표</b>에서 필요한 원소를 눌러 원자 수를 모읍니다. ＋/－로 세밀하게 조절할 수도 있습니다.</li><li>필요한 원자가 모두 모이면 <b>결정 만들기</b>를 눌러 단위격자 층이 나타나는 교육용 성장 애니메이션을 관찰합니다.</li><li><b>완성 광물</b> 탭에서 결정 모형을 자유롭게 회전하고 확대할 수 있습니다.</li><li>새 광물을 발견하면 도감에 기록이 남습니다.</li></ol><p style="font-size:11px;color:#9aaaa3">※ 이 앱은 영상의 사용 경험을 재구성한 독립적인 교육용 시뮬레이터입니다. 5종은 결정학 좌표 기반이고, 나머지는 조성 비율 개념도입니다. 성장 속도는 실제 화학반응의 속도가 아닙니다.</p><button id="startGuideBtn" class="primary-btn modal-cta">실험 시작하기 →</button></div></div>
+<script>
+/* MINERAL LAB 2.0 - crystallographic prototypes.
+   Fractional coordinates are conventional unit-cell coordinates, not pixels.
+   Growth sequence and drawn bond sticks are EDUCATIONAL animations, NOT reaction kinetics.
+   Primary sources: AIST NaCl; AFLOW fluorite and zincblende; Aalto galena;
+   Wisconsin virtual mineral museum sylvite.
+*/
+(function (root) {
+  'use strict';
+  const fcc = [[0,0,0],[0,.5,.5],[.5,0,.5],[.5,.5,0]];
+  const shift = (p, d) => p.map((x,i) => (x + d[i]) % 1);
+  const fluorine = [];
+  for(const x of [.25,.75])for(const y of [.25,.75])for(const z of [.25,.75]) fluorine.push([x,y,z]);
+  const modes = {
+    halite: {name:'암염형(rock salt)', spaceGroup:'Fm-3m (225)', crystalSystem:'등축정계', latticeA:5.640, bondDistance:2.820, coordination:'Na–Cl: 6배위 (정팔면체)', source:'https://unit.aist.go.jp/mmri/ja/organization/db-nomura/common/struc-coord/NaCl-c.html', basis:[{symbol:'Na',p:fcc},{symbol:'Cl',p:fcc.map(p=>shift(p,[.5,.5,.5]))}]},
+    sylvite:{name:'암염형(rock salt)',spaceGroup:'Fm-3m (225)',crystalSystem:'등축정계',latticeA:6.2931,bondDistance:3.14655,coordination:'K–Cl: 6배위',source:'https://soilsfacstaff.cals.wisc.edu/facstaff/barak/virtual_museum/sylvite/sylvite_data.html',basis:[{symbol:'K',p:fcc},{symbol:'Cl',p:fcc.map(p=>shift(p,[.5,.5,.5]))}]},
+    galena:{name:'암염형(rock salt)',spaceGroup:'Fm-3m (225)',crystalSystem:'등축정계',latticeA:5.9362,bondDistance:2.9681,coordination:'Pb–S: 6배위',source:'https://wiki.aalto.fi/spaces/SSC/pages/358351420/Galena',basis:[{symbol:'Pb',p:fcc},{symbol:'S',p:fcc.map(p=>shift(p,[.5,.5,.5]))}]},
+    fluorite:{name:'플루오라이트형',spaceGroup:'Fm-3m (225)',crystalSystem:'등축정계',latticeA:5.462,bondDistance:2.365,coordination:'Ca–F: 8배위 / F–Ca: 4배위',source:'https://aflow.duke.edu/prototype-encyclopedia/AB2_cF12_225_a_c-001/',basis:[{symbol:'Ca',p:fcc},{symbol:'F',p:fluorine}]},
+    sphalerite:{name:'아연블렌드형',spaceGroup:'F-43m (216)',crystalSystem:'등축정계',latticeA:5.410,bondDistance:2.343,coordination:'Zn–S: 4배위 (정사면체)',source:'https://aflow.duke.edu/prototype-encyclopedia/AB_cF8_216_a_c-001/',basis:[{symbol:'Zn',p:fcc},{symbol:'S',p:fcc.map(p=>shift(p,[.25,.25,.25]))}]}
+  };
+  const validCells=n=>Math.max(1,Math.min(3,Math.round(Number(n)||1)));
+  function build(mineral, cells=2) {
+    const n=validCells(cells), spec=modes[mineral.id];
+    if(!spec) return approximate(mineral,n);
+    const a=spec.latticeA, atoms=[];
+    for(let z=0;z<n;z++)for(let y=0;y<n;y++)for(let x=0;x<n;x++)for(const site of spec.basis){
+      for(const p of site.p){
+        const fx=x+p[0],fy=y+p[1],fz=z+p[2];
+        atoms.push({symbol:site.symbol,x:fx,y:fy,z:fz,ang:[fx*a,fy*a,fz*a],cell:[x,y,z]});
+      }
+    }
+    const bounds=n,threshold=spec.bondDistance/a*1.075;
+    const bonds=[];
+    // Include nearest-neighbor bonds whose two centres occur in rendered cells.
+    for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){
+      const u=atoms[i],v=atoms[j];if(u.symbol===v.symbol) continue;
+      const distance=Math.hypot(u.x-v.x,u.y-v.y,u.z-v.z);
+      if(distance<=threshold && distance>0.01) bonds.push([i,j]);
+    }
+    return {accurate:true,atoms,bonds,bounds,settings:spec,latticeA:a,cellCount:n};
+  }
+  function approximate(mineral,n=2){
+    // Intentionally does not imitate a mineral's real crystal lattice.
+    // The symbols follow exactly the empirical formula, repeated as visually arranged groups.
+    const formula=[];
+    Object.entries(mineral.need).forEach(([symbol,count])=>{
+      for(let i=0;i<count;i++) formula.push(symbol);
+    });
+    const atoms=[],repeat=Math.min(8,Math.max(2,n*n));
+    const along=Math.ceil(Math.sqrt(repeat));
+    for(let i=0;i<repeat;i++) for(let k=0;k<formula.length;k++){
+      const a=(k/formula.length)*Math.PI*2;
+      atoms.push({symbol:formula[k], x:(i%along)*1.6+.5+Math.cos(a)*.48,y:Math.floor(i/along)*1.6+.5+Math.sin(a)*.48,z:.5+Math.sin(a*2)*.36,cell:[i%along,Math.floor(i/along),0]});
+    }
+    return {accurate:false,atoms,bonds:[],bounds:along*1.6+1,settings:{name:'조성 비율 개념도',spaceGroup:'검증 좌표 미탑재',crystalSystem:'표시하지 않음',coordination:'결합 거리 검증되지 않음',source:null},cellCount:n};
+  }
+  const api={modes,build,validCells};
+  if(typeof module!=='undefined'&&module.exports) module.exports=api;
+  root.CrystalData=api;
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+/* Offline, dependency-free projection of the SAME 3D crystallographic coordinates.
+   Activated only if the Three.js WebGL module is not available. */
+(function (root) {
+  'use strict';
+  function draw(ctx, w, h, state) {
+    const {structure,data,yaw,pitch,zoom,grow,showBonds,showAxes}=state;
+    if(!structure || !structure.atoms.length) return;
+    const N=structure.atoms.length,bounds=structure.bounds;
+    const angle=yaw*Math.PI/180, phi=pitch*Math.PI/180;
+    const sin=Math.sin,cos=Math.cos;
+    const scale=Math.min(w,h)*.65/bounds*zoom;
+    const cx=w/2, cy=h/2+10;
+    const proj=p=>{
+      const x=p.x-bounds/2,y=p.y-bounds/2,z=p.z-bounds/2;
+      const xx=x*cos(angle)-z*sin(angle),zz=x*sin(angle)+z*cos(angle);
+      const yy=y*cos(phi)-zz*sin(phi), depth=y*sin(phi)+zz*cos(phi);
+      const perspective=5/(5+depth/bounds*2.4);
+      return {x:cx+xx*scale*perspective,y:cy-yy*scale*perspective,d:depth,sz:perspective};
+    };
+    const pos=structure.atoms.map(proj);
+    const appeared=p=>grow>=.998 || ((p.y+.2)/bounds<=grow*1.09);
+    if(showAxes){
+      ctx.save();ctx.setLineDash([3,5]);ctx.lineWidth=1.1;
+      const p=[[0,0,0],[bounds,0,0],[0,bounds,0],[0,0,bounds]].map(([x,y,z])=>proj({x,y,z}));
+      ['#ef8e80','#89ddc2','#a1b9fa'].forEach((c,i)=>{ctx.strokeStyle=c;ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);ctx.lineTo(p[i+1].x,p[i+1].y);ctx.stroke()});ctx.setLineDash([]);ctx.restore();
+    }
+    if(showBonds){
+      ctx.strokeStyle='rgba(207,245,246,.30)';ctx.lineWidth=2;
+      for(const [a,b] of structure.bonds){
+        if(!appeared(structure.atoms[a])||!appeared(structure.atoms[b])) continue;
+        ctx.beginPath();ctx.moveTo(pos[a].x,pos[a].y);ctx.lineTo(pos[b].x,pos[b].y);ctx.stroke();
+      }
+    }
+    const order=[...Array(N).keys()].sort((a,b)=>pos[a].d-pos[b].d);
+    for(const i of order){
+      const atom=structure.atoms[i];if(!appeared(atom))continue;
+      const p=pos[i],r=Math.max(4,Math.min(17,scale*(structure.accurate?.13:.18)*p.sz));
+      const color=data[atom.symbol]||'#9fc7d6';
+      ctx.save();ctx.shadowBlur=8;ctx.shadowColor=color;
+      const gradient=ctx.createRadialGradient(p.x-r*.4,p.y-r*.4,0,p.x,p.y,r);
+      gradient.addColorStop(0,'#f1ffff');gradient.addColorStop(.23,color);gradient.addColorStop(1,'#223b4f');
+      ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(p.x,p.y,r,0,7);ctx.fill();
+      if(r>8){ctx.shadowBlur=0;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='white';ctx.font=`700 ${Math.max(8,r*.75)}px system-ui`;ctx.fillText(atom.symbol,p.x,p.y)}
+      ctx.restore();
+    }
+    if(!structure.accurate){ctx.fillStyle='#d4e1de';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('조성만 표현한 개념도 · 검증된 결정 격자가 아님',cx,h*.79);}
+  }
+  root.LatticeFallback={draw};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script>
+'use strict';
+const MINERALS = [
+{id:'calcite',name:'방해석',formula:'CaCO₃',need:{Ca:1,C:1,O:3},category:'탄산염',kind:'rhombo',color:'#d8e9ef',note:'방해석은 탄산칼슘으로 이루어지며 묽은 산과 만나면 이산화탄소 기포가 발생해요.'},
+{id:'aragonite',name:'아라고나이트',formula:'CaCO₃',need:{Ca:1,C:1,O:3},category:'탄산염',kind:'spike',color:'#f4bd66',note:'방해석과 같은 CaCO₃이지만 원자 배열이 달라 다른 결정 형태를 보여요.'},
+{id:'dolomite',name:'백운석',formula:'CaMg(CO₃)₂',need:{Ca:1,Mg:1,C:2,O:6},category:'탄산염',kind:'rhombo',color:'#ecd6b5',note:'백운석은 칼슘·마그네슘이 함께 들어 있는 탄산염 광물이에요.'},
+{id:'magnesite',name:'마그네사이트',formula:'MgCO₃',need:{Mg:1,C:1,O:3},category:'탄산염',kind:'cube',color:'#d9eac6',note:'마그네사이트는 마그네슘을 포함하며 MgCO₃의 조성 비율을 가집니다.'},
+{id:'siderite',name:'능철석',formula:'FeCO₃',need:{Fe:1,C:1,O:3},category:'탄산염',kind:'cube',color:'#c89d68',note:'철을 포함한 탄산염 광물로 갈색이나 황갈색으로 나타나기도 해요.'},
+{id:'rhodochrosite',name:'능망간석',formula:'MnCO₃',need:{Mn:1,C:1,O:3},category:'탄산염',kind:'cube',color:'#ff9ca7',note:'망가니즈 Mn이 들어 있는 분홍색 탄산염 광물이에요.'},
+{id:'smithsonite',name:'능아연석',formula:'ZnCO₃',need:{Zn:1,C:1,O:3},category:'탄산염',kind:'rhombo',color:'#8fded6',note:'아연 Zn을 포함한 탄산염 광물로 여러 가지 색을 띨 수 있어요.'},
+{id:'halite',name:'암염',formula:'NaCl',need:{Na:1,Cl:1},category:'기타',kind:'cube',color:'#f0e7da',note:'우리가 먹는 소금의 주성분과 같은 염화나트륨이에요. 정육면체 결정이 특징입니다.'},
+{id:'sylvite',name:'실바이트',formula:'KCl',need:{K:1,Cl:1},category:'기타',kind:'cube',color:'#edb8bd',note:'염화칼륨으로 이루어진 할로젠화물이며 암염과 비슷한 정육면체 결정이 자라요.'},
+{id:'fluorite',name:'형석',formula:'CaF₂',need:{Ca:1,F:2},category:'기타',kind:'cube',color:'#9f92eb',note:'형석은 플루오린화칼슘이며 자외선에서 형광을 보이는 경우가 있어요.'},
+{id:'pyrite',name:'황철석',formula:'FeS₂',need:{Fe:1,S:2},category:'황화물',kind:'cube',color:'#e0bb4c',note:'반짝이는 황금빛 외관 때문에 바보의 금이라고 불리기도 합니다.'},
+{id:'chalcopyrite',name:'황동석',formula:'CuFeS₂',need:{Cu:1,Fe:1,S:2},category:'황화물',kind:'diamond',color:'#eac364',note:'구리와 철을 포함한 황화 광물로 중요한 구리 광석이에요.'},
+{id:'cuprite',name:'적동석',formula:'Cu₂O',need:{Cu:2,O:1},category:'기타',kind:'diamond',color:'#d46a62',note:'구리와 산소가 2:1의 조성 비율을 이루는 산화물입니다.'},
+{id:'malachite',name:'공작석',formula:'Cu₂CO₃(OH)₂',need:{Cu:2,C:1,O:5,H:2},category:'탄산염',kind:'cluster',color:'#58c9a1',note:'초록색 줄무늬가 특징인 구리 탄산염 광물로 장식석에도 쓰여요.'},
+{id:'azurite',name:'남동석',formula:'Cu₃(CO₃)₂(OH)₂',need:{Cu:3,C:2,O:8,H:2},category:'탄산염',kind:'spike',color:'#5b9ff5',note:'파란 구리 광물이에요. 괄호 밖 숫자를 안쪽 원소 수에 각각 곱해요.'},
+{id:'quartz',name:'석영',formula:'SiO₂',need:{Si:1,O:2},category:'기타',kind:'spike',color:'#c4d8f0',note:'석영은 이산화규소로 구성되며 육각 기둥 형태로 자라기도 해요.'},
+{id:'hematite',name:'적철석',formula:'Fe₂O₃',need:{Fe:2,O:3},category:'기타',kind:'rhombo',color:'#b36861',note:'철 산화물의 일종으로 붉은색 줄무늬를 남기는 것이 특징이에요.'},
+{id:'magnetite',name:'자철석',formula:'Fe₃O₄',need:{Fe:3,O:4},category:'기타',kind:'diamond',color:'#56616d',note:'강한 자성을 지니는 철 산화물로 검은빛을 띠어요.'},
+{id:'gypsum',name:'석고',formula:'CaSO₄·2H₂O',need:{Ca:1,S:1,O:6,H:4},category:'기타',kind:'spike',color:'#d4dce9',note:'석고는 결정수 2분자를 포함하는 황산칼슘으로 실내 벽 재료 등에 쓰입니다.'},
+{id:'sulfur',name:'자연황',formula:'S₈',need:{S:8},category:'기타',kind:'diamond',color:'#f3d544',note:'자연 상태에서 황 원자 8개가 고리 형태로 모여 있는 분자가 많이 발견됩니다.'},
+{id:'galena',name:'방연석',formula:'PbS',need:{Pb:1,S:1},category:'황화물',kind:'cube',color:'#939aac',note:'납 Pb과 황 S가 결합한 황화 광물로 금속광택을 띠는 경우가 많아요.'},
+{id:'sphalerite',name:'섬아연석',formula:'ZnS',need:{Zn:1,S:1},category:'황화물',kind:'diamond',color:'#bd8a65',note:'아연의 주요 광석이에요. 작은 결정이 모여 다양한 형태를 만듭니다.'}
+];
+const symbolList='H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og'.split(' ');
+const koreanList='수소 헬륨 리튬 베릴륨 붕소 탄소 질소 산소 플루오린 네온 나트륨 마그네슘 알루미늄 규소 인 황 염소 아르곤 칼륨 칼슘 스칸듐 타이타늄 바나듐 크로뮴 망가니즈 철 코발트 니켈 구리 아연 갈륨 저마늄 비소 셀레늄 브로민 크립톤 루비듐 스트론튬 이트륨 지르코늄 나이오븀 몰리브데넘 테크네튬 루테늄 로듐 팔라듐 은 카드뮴 인듐 주석 안티모니 텔루륨 아이오딘 제논 세슘 바륨 란타넘 세륨 프라세오디뮴 네오디뮴 프로메튬 사마륨 유로퓸 가돌리늄 터븀 디스프로슘 홀뮴 어븀 툴륨 이터븀 루테튬 하프늄 탄탈럼 텅스텐 레늄 오스뮴 이리듐 백금 금 수은 탈륨 납 비스무트 폴로늄 아스타틴 라돈 프랑슘 라듐 악티늄 토륨 프로트악티늄 우라늄 넵투늄 플루토늄 아메리슘 퀴륨 버클륨 캘리포늄 아인슈타이늄 페르뮴 멘델레븀 노벨륨 로렌슘 러더포듐 더브늄 시보귬 보륨 하슘 마이트너륨 다름슈타튬 뢴트게늄 코페르니슘 니호늄 플레로븀 모스코븀 리버모륨 테네신 오가네손'.split(' ');
+const periodicRows=[['H',1],['He',18],['Li',1],['Be',2],['B',13],['C',14],['N',15],['O',16],['F',17],['Ne',18],['Na',1],['Mg',2],['Al',13],['Si',14],['P',15],['S',16],['Cl',17],['Ar',18],['K',1],['Ca',2],['Sc',3],['Ti',4],['V',5],['Cr',6],['Mn',7],['Fe',8],['Co',9],['Ni',10],['Cu',11],['Zn',12],['Ga',13],['Ge',14],['As',15],['Se',16],['Br',17],['Kr',18],['Rb',1],['Sr',2],['Y',3],['Zr',4],['Nb',5],['Mo',6],['Tc',7],['Ru',8],['Rh',9],['Pd',10],['Ag',11],['Cd',12],['In',13],['Sn',14],['Sb',15],['Te',16],['I',17],['Xe',18],['Cs',1],['Ba',2],['La',3],['Hf',4],['Ta',5],['W',6],['Re',7],['Os',8],['Ir',9],['Pt',10],['Au',11],['Hg',12],['Tl',13],['Pb',14],['Bi',15],['Po',16],['At',17],['Rn',18],['Fr',1],['Ra',2],['Ac',3],['Rf',4],['Db',5],['Sg',6],['Bh',7],['Hs',8],['Mt',9],['Ds',10],['Rg',11],['Cn',12],['Nh',13],['Fl',14],['Mc',15],['Lv',16],['Ts',17],['Og',18]];
+const posMap=new Map();periodicRows.forEach(([s,col],i)=>{let r=i<2?1:i<10?2:i<18?3:i<36?4:i<54?5:i<72?6:7;posMap.set(s,{row:r,col});});
+const lanth='Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu'.split(' '),act='Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr'.split(' ');lanth.forEach((s,i)=>posMap.set(s,{row:9,col:i+4}));act.forEach((s,i)=>posMap.set(s,{row:10,col:i+4}));
+const specialRow7=['Rf','Db','Sg','Bh','Hs','Mt','Ds','Rg','Cn','Nh','Fl','Mc','Lv','Ts','Og'];specialRow7.forEach((s,i)=>posMap.set(s,{row:7,col:i+4}));
+const categoryOf=(s,n)=>s==='H'||['C','N','O','P','S','Se'].includes(s)?'nonmetal': ['He','Ne','Ar','Kr','Xe','Rn','Og'].includes(s)?'noble':['F','Cl','Br','I','At','Ts'].includes(s)?'halogen':['Li','Na','K','Rb','Cs','Fr'].includes(s)?'alkali':['Be','Mg','Ca','Sr','Ba','Ra'].includes(s)?'alkaline':['B','Si','Ge','As','Sb','Te'].includes(s)?'metalloid':n>=58&&n<=71?'lanthanide':n>=90&&n<=103?'actinide':((n>=21&&n<=30)||(n>=39&&n<=48)||(n>=72&&n<=80)||(n>=104&&n<=112))?'transition':'post';
+const COLORS={H:'#54c4e6',C:'#6286a3',O:'#f37772',Mn:'#a78af0',Cu:'#e7a066',Fe:'#c58b66',Ca:'#e0c27e',Mg:'#8db7a0',Zn:'#80b6bb',Na:'#f6b365',Cl:'#64c88c',S:'#ecc66d',Si:'#8794c6',F:'#9ad9c1',K:'#c7a0d3',Pb:'#96a2bd'};
+const MASS={H:1,He:4,Li:7,Be:9,B:11,C:12,N:14,O:16,F:19,Ne:20,Na:23,Mg:24,Al:27,Si:28,P:31,S:32,Cl:35,Ar:40,K:39,Ca:40,Sc:45,Ti:48,V:51,Cr:52,Mn:55,Fe:56,Co:59,Ni:59,Cu:64,Zn:65,Ga:70,Ge:73,As:75,Se:79,Br:80,Kr:84,Ag:108,Au:197,Pb:207};
+const SHELLS={H:[1],He:[2],Li:[2,1],Be:[2,2],B:[2,3],C:[2,4],N:[2,5],O:[2,6],F:[2,7],Ne:[2,8],Na:[2,8,1],Mg:[2,8,2],Al:[2,8,3],Si:[2,8,4],P:[2,8,5],S:[2,8,6],Cl:[2,8,7],Ar:[2,8,8],K:[2,8,8,1],Ca:[2,8,8,2],Mn:[2,8,13,2],Fe:[2,8,14,2],Cu:[2,8,18,1],Zn:[2,8,18,2]};
+const elements=symbolList.map((s,i)=>({s,n:i+1,name:koreanList[i]||s,...(posMap.get(s)||{row:8,col:1}),type:categoryOf(s,i+1)}));const E=Object.fromEntries(elements.map(x=>[x.s,x]));
+let current=MINERALS[5],counts={},selected='O',mode='atoms',phase='idle',grow=0,speed=1,rotation=25,zoom=1,pitch=25,cellCount=2,showBonds=true,showAxes=true,autoSpin=false,filter='전체',particles=[],lastTick=0,progressSaved=[];let deferredInstall=null;let pointerStart=null;let cachedCrystalKey='',cachedCrystalValue=null;
+const $=id=>document.getElementById(id);const clamp=(a,min,max)=>Math.min(max,Math.max(min,a));const totalNeeded=()=>Object.values(current.need).reduce((a,b)=>a+b,0);const collected=()=>Object.entries(current.need).reduce((a,[s])=>a+(counts[s]||0),0);
+const allReady=()=>Object.entries(current.need).every(([s,n])=>(counts[s]||0)>=n);
+function persistLoad(){try{let p=JSON.parse(localStorage.getItem('mineral-lab-found')||'[]');progressSaved=Array.isArray(p)?p.filter(s=>MINERALS.some(m=>m.id===s)):[]}catch{progressSaved=[]}}
+function persistSave(){try{localStorage.setItem('mineral-lab-found',JSON.stringify(progressSaved))}catch{}}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)}
+function mineralIcon(m){let col=m.color;return `<svg viewBox="0 0 48 48" aria-hidden="true"><polygon points="24,3 39,12 43,31 25,44 6,34 8,13" fill="${col}" opacity=".8"/><polygon points="24,3 24,23 8,13" fill="#ffffff99"/><polygon points="24,23 43,31 25,44" fill="#243d5855"/><polygon points="24,23 39,12 43,31" fill="#ffffff2c"/><polygon points="6,34 24,23 25,44" fill="#34455538"/><path d="M24 3 L39 12 L43 31 L25 44 L6 34 L8 13 Z M8 13 L24 23 L39 12 M24 23 L25 44 M24 23 L43 31" fill="none" stroke="#ffffff9a" stroke-width="1.1"/></svg>`}
+function updateCatalog(){const query=$('mineralSearch').value.trim().toLowerCase();const items=MINERALS.filter(m=>(filter==='전체'||(filter==='기타'?m.category!=='탄산염'&&m.category!=='황화물':m.category===filter))&&(m.name.includes(query)||m.formula.toLowerCase().includes(query)));$('catalogCount').textContent=`${items.length}종의 광물`;$('mineralList').innerHTML=items.map(m=>`<button type="button" class="mineral-item ${m.id===current.id?'active':''}" data-mineral="${m.id}"><div class="crystal-swatch">${mineralIcon(m)}</div><div class="mineral-txt"><b>${m.name}</b><small>${m.formula} · ${m.category}</small></div>${progressSaved.includes(m.id)?'<span class="found-dot" title="발견 완료">✓</span>':''}</button>`).join('');$('mineralList').querySelectorAll('[data-mineral]').forEach(btn=>btn.addEventListener('click',()=>selectMineral(btn.dataset.mineral)));$('filters').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));}
+function updateHeader(){updateLatticeInfo();$('mineralTitle').textContent=current.name;$('mineralFormula').textContent=current.formula;$('mineralNote').textContent=current.note;document.title=`${current.name} | MINERAL LAB`;$('discoveryCount').textContent=`${progressSaved.length} / ${MINERALS.length} 발견`;$('topProgress').style.width=`${progressSaved.length/MINERALS.length*100}%`}
+function updateGoals(){let need=totalNeeded(),done=collected();$('fractionNote').textContent=`${done}개 수집 / ${need}개 필요`;$('atomGoals').innerHTML=Object.entries(current.need).map(([s,n])=>`<div class="atom-goal"><span class="atom-symbol" style="background:${COLORS[s]||'#9bafbc'}">${s}</span><span class="counts ${(counts[s]||0)>=n?'complete':''}">${counts[s]||0} / ${n}</span><span class="goal-actions"><button class="mini-btn" data-sub="${s}" ${!counts[s]?'disabled':''} aria-label="${E[s]?.name||s} 1개 빼기">−</button><button class="mini-btn" data-add="${s}" ${(counts[s]||0)>=n?'disabled':''} aria-label="${E[s]?.name||s} 1개 추가">+</button></span></div>`).join('');$('atomGoals').querySelectorAll('[data-add]').forEach(el=>el.addEventListener('click',()=>addAtom(el.dataset.add)));$('atomGoals').querySelectorAll('[data-sub]').forEach(el=>el.addEventListener('click',()=>removeAtom(el.dataset.sub)));$('synthesizeBtn').disabled=!allReady()||phase==='forming';$('synthesizeBtn').innerHTML=phase==='done'?'다시 성장시키기 <span>↻</span>':'결정 만들기 <span>▶</span>';$('atomHint').textContent=allReady()?'필요한 원소가 모두 모였어요! 결정 만들기를 눌러 성장 과정을 관찰해 보세요.':'아래 주기율표에서 필요한 원소를 찾거나 ＋ · － 버튼으로 개수를 맞춰 보세요.';$('stageStatus').textContent=phase==='forming'?'결정이 성장하는 중':phase==='done'?'결정 완성 · 발견 성공':done?'원자들이 모이는 중':'재료를 기다리는 중';$('stageEmpty').classList.toggle('hidden',done>0||mode==='crystal'||mode==='lattice'||phase==='forming'||phase==='done');$('stageFooter').textContent=phase==='done'?`${current.name} 합성 완료 · 원자 조성 비율 ${current.formula}`:mode==='lattice'?'드래그로 3D 회전 · 확대 · 원자 간 이웃 연결선 관찰':mode==='crystal'?'마우스 또는 터치로 회전하고 슬라이더로 확대해 보세요.':'원자를 모은 뒤 결정 만들기를 눌러요. 완성 광물 탭에서는 미리 볼 수 있어요.';}
+function selectMineral(id){let found=MINERALS.find(m=>m.id===id);if(!found)return;current=found;counts={};phase='idle';grow=0;mode='atoms';particles=[];rotation=25;zoom=1;pitch=25;$('rotationRange').value='25';$('rotateValue').textContent='25°';$('zoomRange').value='100';$('zoomValue').textContent='100%';selected=Object.keys(current.need)[0];$('growProgress').style.display='none';setMode('atoms');updateHeader();updateCatalog();updateGoals();updatePeriodic();updateInspector();$('catalog').classList.remove('mobile-open');toast(`${current.name} 실험을 시작합니다.`)}
+function makeParticle(s){const rect=$('stageCanvas').getBoundingClientRect();const w=rect.width||600,h=rect.height||390;const angle=Math.random()*Math.PI*2, radius=36+Math.random()*78;return {s,x:w/2+Math.cos(angle)*radius,y:h/2+Math.sin(angle)*radius,vx:(Math.random()-.5)*.62,vy:(Math.random()-.5)*.62,r:s==='H'?13:15+Math.random()*3,phase:Math.random()*Math.PI*2}}
+function rebuildParticles(){let found=[];for(const [s,n] of Object.entries(counts))for(let i=0;i<n;i++)found.push(makeParticle(s));particles=found}
+function addAtom(s){selected=s;updateInspector();if(!current.need[s]){toast(`${E[s]?.name||s}은(는) 현재 광물의 구성 원소가 아니에요.`);return}if(phase==='forming'){toast('결정이 성장하는 동안은 원자를 변경할 수 없어요.');return}if((counts[s]||0)>=current.need[s]){toast(`${E[s]?.name||s}은(는) 필요한 수량을 모두 모았어요.`);return}counts[s]=(counts[s]||0)+1;phase='idle';if(mode==='crystal')setMode('atoms');rebuildParticles();updateGoals();updatePeriodic();}
+function removeAtom(s){if(phase==='forming')return;counts[s]=Math.max(0,(counts[s]||0)-1);phase='idle';if(mode==='crystal')setMode('atoms');rebuildParticles();updateGoals();updatePeriodic()}
+function fillSelected(){if(!current.need[selected]){toast('현재 광물에 사용되는 원소를 먼저 골라 주세요.');return}if(phase==='forming')return;counts[selected]=current.need[selected];phase='idle';rebuildParticles();setMode('atoms');updateGoals();updatePeriodic();toast(`${E[selected].name} ${counts[selected]}개를 채웠어요.`)}
+function latticeStructure(){const key=current.id+':'+cellCount;if(key!==cachedCrystalKey){cachedCrystalKey=key;cachedCrystalValue=CrystalData.build(current,cellCount)}return cachedCrystalValue}
+function updateLatticeInfo(){
+  const structure=latticeStructure(),m=structure.settings;
+  $('accuracyBadge').textContent=structure.accurate?'결정학 좌표 기반':'교육용 조성 개념도';
+  $('accuracyBadge').classList.toggle('concept',!structure.accurate);
+  $('latticeDetail').innerHTML=structure.accurate?`<span>결정계 <b>${m.crystalSystem}</b></span><span>공간군 <b>${m.spaceGroup}</b></span><span>격자상수 <b>a = ${m.latticeA} Å</b></span><span>배위 <b>${m.coordination}</b></span><span>표시 원자 <b>${structure.atoms.length}개</b></span><a class="lattice-source" href="${m.source}" target="_blank" rel="noopener noreferrer">결정 구조 원문 ↗</a>`:`<span><b>${current.name}</b>: 화학식의 원자 수 비율을 보여 주는 모형입니다. 이 광물의 실측 3D 원자 좌표는 제공하지 않습니다.</span>`;
+  window.dispatchEvent(new Event('mineral:updated'));
+}
+function setMode(target){
+  mode=target;
+  for(const [id,m] of [['atomsTab','atoms'],['crystalTab','crystal'],['latticeTab','lattice']]){
+    $(id).classList.toggle('active',mode===m);$(id).setAttribute('aria-selected',String(mode===m));
+  }
+  $('stageTag').textContent=mode==='lattice'?(latticeStructure().accurate?'실측 좌표 · 3D 격자':'조성 개념도 · 비실측'):mode==='crystal'?'결정 외형 · 교육용 모형':'조성 비율 · 움직이는 원자';
+  $('stageWrap').style.touchAction=mode==='lattice'?'none':'pan-y';
+  updateGoals();window.dispatchEvent(new Event('mineral:mode'));
+}
+function synthesize(){if(!allReady()){toast('필요한 원자의 개수를 먼저 맞춰 주세요.');return}phase='forming';grow=0;$('growProgress').style.display='block';$('growFill').style.width='0%';$('growPercent').textContent='0%';setMode('lattice');updateGoals();toast(`${current.name} 결정을 성장시키는 중...`)}
+function updatePeriodic(){const needed=Object.keys(current.need);const only=$('onlyNeeded').checked;const q=$('elementSearch').value.trim().toLowerCase();const map=new Map(elements.map(x=>[x.s,x]));$('periodicGrid').innerHTML=elements.map(e=>{const isNeeded=needed.includes(e.s),match=!q||e.s.toLowerCase().includes(q)||e.name.includes(q),dim=(only&&!isNeeded)||!match;return `<button type="button" class="element-tile ${selected===e.s?'active':''} ${dim?'dimmed':''}" data-symbol="${e.s}" data-type="${e.type}" style="grid-row:${e.row};grid-column:${e.col}" title="${e.name} (${e.s}), 원자번호 ${e.n}" aria-label="${e.name} ${e.s} 원소 선택"><span class="num">${e.n}</span><span class="sym">${e.s}</span><span class="kor">${e.name}</span>${isNeeded?'<span class="need-corner">●</span>':''}</button>`}).join('');$('periodicGrid').querySelectorAll('[data-symbol]').forEach(el=>el.addEventListener('click',()=>{const s=el.dataset.symbol;selected=s;updateInspector();updatePeriodic();if(current.need[s])addAtom(s);else toast(`${E[s].name} 원자 정보를 표시했어요.`)}));}
+function electronShells(e){if(SHELLS[e.s])return SHELLS[e.s];const n=e.n;let shells=[],remain=n;for(const max of [2,8,18,32,32,18,8]){if(remain<=0)break;let take=Math.min(max,remain);shells.push(take);remain-=take}return shells}
+function updateInspector(){let e=E[selected];$('elementBadge').textContent=`${e.name} · ${e.s}`;$('protons').textContent=e.n;$('electrons').textContent=e.n;$('neutrons').textContent=Math.max(0,(MASS[e.s]||Math.round(e.n*2.3))-e.n);$('elementInfoTitle').textContent=`${e.name} · ${e.n}번 원소`;$('elementInfoBody').textContent=`전자껍질 분포(교육용): ${electronShells(e).join(' · ')}\n원자 기호: ${e.s}  /  분류: ${({nonmetal:'비금속',transition:'전이 금속',alkali:'알칼리 금속',alkaline:'알칼리 토금속',halogen:'할로젠',noble:'비활성 기체',post:'기타 금속',metalloid:'준금속',lanthanide:'란타넘족',actinide:'악티늄족'})[e.type]}`;$('addSelectedBtn').disabled=!current.need[selected]||(counts[selected]||0)>=current.need[selected]||phase==='forming';$('fillSelectedBtn').disabled=!current.need[selected]||phase==='forming';}
+const stage=$('stageCanvas'),sc=stage.getContext('2d'),bohr=$('bohrCanvas'),bc=bohr.getContext('2d');let stageSize={w:0,h:0},bohrSize={w:0,h:0},dpr=1;
+function resizeCanvas(canvas,ctx){const box=canvas.getBoundingClientRect();let ratio=Math.min(2,window.devicePixelRatio||1);let w=Math.max(1,box.width),h=Math.max(1,box.height);if(canvas.width!==Math.round(w*ratio)||canvas.height!==Math.round(h*ratio)){canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio)}ctx.setTransform(ratio,0,0,ratio,0,0);return{w,h}}
+function rgba(hex,opacity){if(!/^#[0-9a-f]{6}$/i.test(hex))return `rgba(140,185,210,${opacity})`;let n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${opacity})`}
+function mixColor(hex,f){let n=parseInt(hex.slice(1),16),c=[n>>16,(n>>8)&255,n&255].map(x=>clamp(Math.round(x+(f>0?(255-x)*f:x*f)),0,255));return `rgb(${c.join(',')})`}
+function drawAtom(ctx,x,y,r,s,glow=1){const base=COLORS[s]||'#a5c5ce';ctx.save();ctx.shadowBlur=12*glow;ctx.shadowColor=rgba(base,.48);const grad=ctx.createRadialGradient(x-r*.35,y-r*.47,2,x,y,r);grad.addColorStop(0,mixColor(base,.56));grad.addColorStop(.42,base);grad.addColorStop(1,mixColor(base,-.2));ctx.fillStyle=grad;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff63';ctx.lineWidth=1.4;ctx.stroke();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.font=`800 ${Math.max(10,r*.8)}px system-ui`;ctx.fillText(s,x,y+1);ctx.restore()}
+function crystalVertices(kind){if(kind==='cube'||kind==='rhombo'||kind==='cluster'){let points=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];if(kind==='rhombo')points=points.map(([x,y,z])=>[x+.35*y,y+.08*z,z]);return {pts:points,faces:[[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]};}
+if(kind==='diamond'){return{pts:[[0,-1.55,0],[1,0,0],[0,0,1],[-1,0,0],[0,0,-1],[0,1.45,0]],faces:[[0,1,2],[0,2,3],[0,3,4],[0,4,1],[5,2,1],[5,3,2],[5,4,3],[5,1,4]]}}
+const pts=[];let sides=6;for(let i=0;i<sides;i++){let a=i*Math.PI*2/sides;pts.push([Math.cos(a),-.5,Math.sin(a)])}for(let i=0;i<sides;i++){let a=i*Math.PI*2/sides;pts.push([Math.cos(a),.65,Math.sin(a)])}pts.push([0,-1.65,0]);let faces=[];for(let i=0;i<sides;i++){faces.push([i,(i+1)%sides,(i+1)%sides+sides,i+sides]);faces.push([i,(i+1)%sides,sides*2])}return{pts,faces};}
+function renderGem(ctx,x,y,size,color,kind,angle,alpha=1){let geometry=crystalVertices(kind),sin=Math.sin(angle),cos=Math.cos(angle),tilt=.33;const pt=geometry.pts.map(([px,py,pz])=>{let xx=px*cos-pz*sin,zz=px*sin+pz*cos;return {x:x+(xx)*size*.82,y:y+(py*.85+zz*.34)*size*.82,z:zz-.12*py}});const faces=geometry.faces.map(face=>{let arr=face.map(i=>pt[i]);let depth=arr.reduce((a,p)=>a+p.z,0)/arr.length;let vx=arr[1].x-arr[0].x,vy=arr[1].y-arr[0].y,vx2=arr[2].x-arr[0].x,vy2=arr[2].y-arr[0].y;return {arr,depth,shade:((vx*vy2-vy*vx2)>0?-.05:.2)+depth*.14}}).sort((a,b)=>a.depth-b.depth);ctx.save();ctx.globalAlpha=alpha;ctx.shadowColor=rgba(color,.45);ctx.shadowBlur=16;faces.forEach((f,i)=>{ctx.beginPath();f.arr.forEach((p,j)=>j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fillStyle=mixColor(color,clamp(f.shade,-.35,.35));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#dff4ff9e';ctx.lineWidth=1.6;ctx.stroke();});ctx.restore()}
+function drawStage(time,dt){stageSize=resizeCanvas(stage,sc);let {w,h}=stageSize;sc.clearRect(0,0,w,h);let cx=w/2,cy=h/2-3;for(let i=0;i<24;i++){let x=(Math.sin(i*81.7)*.5+.5)*w,y=(Math.cos(i*19.4)*.5+.5)*h;sc.beginPath();sc.fillStyle=`rgba(170,212,220,${.05+.04*Math.sin(time*.001+i)})`;sc.arc(x,y,1.2,0,7);sc.fill()}
+if(mode==='lattice'){LatticeFallback.draw(sc,w,h,{structure:latticeStructure(),data:COLORS,yaw:rotation,pitch,zoom,grow:phase==='forming'?grow/100:1,showBonds,showAxes});}
+else {const displayCrystal=mode==='crystal'||phase==='forming'||phase==='done';if(displayCrystal){let growth=phase==='forming'?clamp(grow/100,.05,1):1;let scale=clamp(Math.min(w/650,h/410),.65,1.2)*zoom;let rot=rotation*Math.PI/180;const specs=current.kind==='cluster'?[[0,0,88],[68,35,61],[-66,34,54],[-39,-38,54],[53,-48,45]]:current.kind==='spike'?[[0,1,95],[-68,39,60],[66,38,63],[-31,-28,45],[33,-42,50]]:[[0,0,97],[-57,39,53],[54,34,53]];for(let i=0;i<specs.length;i++){let [dx,dy,sz]=specs[i];let localGrow=clamp(growth*1.7-i*.13,0,1);if(localGrow<=0)continue;renderGem(sc,cx+dx*scale,cy+dy*scale,sz*scale*localGrow,current.color,current.kind,rot+i*.14,localGrow)}
+if(phase!=='done')for(const p of particles){let px=p.x-cx,py=p.y-cy;let orbit=.5+Math.cos(time*.0006+p.phase)*.1;let x=cx+px*(1-growth*.46)*orbit,y=cy+py*(1-growth*.45)*orbit;drawAtom(sc,x,y,p.r*.72*zoom,p.s,.4)}
+if(phase==='forming'){let sparkleCount=12;for(let i=0;i<sparkleCount;i++){const a=i*6.28/sparkleCount+time*.00034,rad=(70+Math.sin(time*.001+i)*22)*scale;sc.fillStyle=`rgba(184,241,237,${.5+.4*Math.sin(time*.004+i)})`;sc.beginPath();sc.arc(cx+Math.cos(a)*rad*1.8,cy+Math.sin(a)*rad*1.4,1.8,0,7);sc.fill()}}}
+else if(particles.length){sc.strokeStyle='rgba(174,220,230,.12)';sc.lineWidth=1;for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){let a=particles[i],b=particles[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<115){sc.globalAlpha=1-d/115;sc.beginPath();sc.moveTo(a.x,a.y);sc.lineTo(b.x,b.y);sc.stroke()}}sc.globalAlpha=1;for(let p of particles){p.vx+=((cx-p.x)*.000014+Math.sin(time*.0007+p.phase)*.0006)*dt;p.vy+=((cy-p.y)*.000012+Math.cos(time*.0006+p.phase)*.0006)*dt;let damp=.985;p.vx=clamp(p.vx*damp,-.8,.8);p.vy=clamp(p.vy*damp,-.8,.8);p.x+=p.vx*dt*.065;p.y+=p.vy*dt*.065;if(p.x<23||p.x>w-23)p.vx*=-1;if(p.y<35||p.y>h-24)p.vy*=-1;drawAtom(sc,p.x,p.y,p.r*zoom*.9,p.s)}}
+}
+if(phase==='forming'){grow=clamp(grow+dt*.027*speed,0,100);$('growFill').style.width=`${grow}%`;$('growPercent').textContent=`${Math.floor(grow)}%`;if(grow>=100){phase='done';mode='lattice';if(!progressSaved.includes(current.id)){progressSaved.push(current.id);persistSave();toast(`새로운 광물 발견! ${current.name} 도감에 등록했어요.`)}else toast(`${current.name} 결정이 완성되었어요!`);$('growProgress').style.display='none';setMode('lattice');updateHeader();updateCatalog();updateGoals();updateInspector();updatePeriodic();}}
+}
+function drawBohr(time){bohrSize=resizeCanvas(bohr,bc);const {w,h}=bohrSize;bc.clearRect(0,0,w,h);let e=E[selected];if(!e)return;let shell=electronShells(e).slice(0,7),cx=w/2,cy=h/2-9,outer=Math.min(w,h)*.4,maxR=outer;bc.save();for(let j=0;j<shell.length;j++){let r=maxR*(j+1)/shell.length;bc.strokeStyle='#a5c4d53d';bc.lineWidth=1.4;bc.beginPath();bc.arc(cx,cy,r,0,7);bc.stroke();let count=shell[j];for(let k=0;k<count;k++){let ang=k*Math.PI*2/count+(time*.00018*(j%2?-1:1))+.65*j;let ex=cx+Math.cos(ang)*r,ey=cy+Math.sin(ang)*r;bc.shadowBlur=6;bc.shadowColor='#c1f8ff';bc.fillStyle='#c8f4fa';bc.beginPath();bc.arc(ex,ey,count>16?2.3:3,0,7);bc.fill()}}bc.shadowBlur=12;bc.shadowColor='#f8b48c';for(let i=0;i<Math.min(e.n,17);i++){let ang=i*2.39996,timeOffset=time*.00004*(i%2?1:-1),rad=Math.sqrt((i+.6)/Math.min(e.n,17))*13;bc.fillStyle=i%2?'#f5b27d':'#e9a1d6';bc.beginPath();bc.arc(cx+Math.cos(ang+timeOffset)*rad,cy+Math.sin(ang+timeOffset)*rad,4,0,7);bc.fill()}bc.shadowBlur=0;bc.restore()}
+function frame(now){let dt=lastTick?Math.min(now-lastTick,52):16;lastTick=now;drawStage(now,dt);drawBohr(now);requestAnimationFrame(frame)}
+$('mineralSearch').addEventListener('input',updateCatalog);$('filters').querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;updateCatalog()}));$('atomsTab').addEventListener('click',()=>setMode('atoms'));$('crystalTab').addEventListener('click',()=>setMode('crystal'));$('latticeTab').addEventListener('click',()=>setMode('lattice'));
+$('synthesizeBtn').addEventListener('click',synthesize);$('clearBtn').addEventListener('click',()=>{counts={};phase='idle';grow=0;rebuildParticles();$('growProgress').style.display='none';setMode('atoms');updateGoals();updateInspector();updatePeriodic();toast('실험 재료를 모두 비웠어요.')});$('fillAllBtn').addEventListener('click',()=>{if(phase==='forming')return;counts={...current.need};phase='idle';rebuildParticles();setMode('atoms');updateGoals();updateInspector();updatePeriodic();toast('필요한 원소를 모두 채웠어요.')});$('addSelectedBtn').addEventListener('click',()=>addAtom(selected));$('fillSelectedBtn').addEventListener('click',fillSelected);
+$('cellCount').addEventListener('change',e=>{cellCount=CrystalData.validCells(e.target.value);updateLatticeInfo()});
+$('bondToggle').addEventListener('change',e=>{showBonds=e.target.checked;window.dispatchEvent(new Event('mineral:updated'))});
+$('axesToggle').addEventListener('change',e=>{showAxes=e.target.checked;window.dispatchEvent(new Event('mineral:updated'))});
+$('spinToggle').addEventListener('change',e=>{autoSpin=e.target.checked});
+window.mineralAppState={COLORS,get:()=>({current,phase,grow,mode,zoom,speed,cellCount,showBonds,showAxes,autoSpin,structure:latticeStructure()}),setOrbitAngle:angle=>{if(mode!=='lattice')return;rotation=angle;$('rotationRange').value=Math.round(angle);$('rotateValue').textContent=`${Math.round(angle)}°`;}};
+window.addEventListener('mineral:three-ready',()=>{if(mode==='lattice')window.dispatchEvent(new Event('mineral:mode'));});
+$('onlyNeeded').addEventListener('change',updatePeriodic);$('elementSearch').addEventListener('input',updatePeriodic);$('speedSelect').addEventListener('change',ev=>{speed=Number(ev.target.value)});
+$('rotationRange').addEventListener('input',ev=>{rotation=Number(ev.target.value);$('rotateValue').textContent=`${rotation}°`;window.MineralThree?.angle(rotation)});$('zoomRange').addEventListener('input',ev=>{zoom=Number(ev.target.value)/100;$('zoomValue').textContent=`${Math.round(zoom*100)}%`;window.MineralThree?.setZoom(zoom)});$('resetViewBtn').addEventListener('click',()=>{rotation=25;zoom=1;$('rotationRange').value=25;$('zoomRange').value=100;$('rotateValue').textContent='25°';$('zoomValue').textContent='100%';pitch=25;window.MineralThree?.reset()});
+$('stageWrap').addEventListener('pointerdown',ev=>{if(ev.target===stage){pointerStart={x:ev.clientX,y:ev.clientY,rotation,pitch};stage.setPointerCapture(ev.pointerId)}});stage.addEventListener('pointermove',ev=>{if(pointerStart){rotation=((pointerStart.rotation+(ev.clientX-pointerStart.x)*.75)%360+360)%360;$('rotationRange').value=rotation;$('rotateValue').textContent=`${Math.round(rotation)}°`;if(mode==='lattice')pitch=clamp(pointerStart.pitch+(ev.clientY-pointerStart.y)*.5,-75,75)}});stage.addEventListener('pointerup',()=>pointerStart=null);stage.addEventListener('pointercancel',()=>pointerStart=null);stage.addEventListener('wheel',ev=>{if(!ev.ctrlKey)return;ev.preventDefault();zoom=clamp(zoom-ev.deltaY*.001, .55,1.7);$('zoomRange').value=Math.round(zoom*100);$('zoomValue').textContent=`${Math.round(zoom*100)}%`},{passive:false});
+$('guideBtn').addEventListener('click',()=>{$('guideModal').classList.remove('hidden')});const closeGuide=()=>$('guideModal').classList.add('hidden');$('modalClose').addEventListener('click',closeGuide);$('startGuideBtn').addEventListener('click',closeGuide);$('guideModal').addEventListener('click',e=>{if(e.target===$('guideModal'))closeGuide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGuide();$('catalog').classList.remove('mobile-open')}});
+$('menuBtn').addEventListener('click',()=>{$('catalog').classList.toggle('mobile-open')});$('resetDiscoveriesBtn').addEventListener('click',()=>{if(!window.confirm('광물 발견 기록을 모두 초기화할까요?'))return;progressSaved=[];persistSave();updateCatalog();updateHeader();toast('발견 기록을 초기화했어요.')});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('installBtn').style.display='inline-block'});$('installBtn').addEventListener('click',async()=>{if(!deferredInstall)return;deferredInstall.prompt();await deferredInstall.userChoice;deferredInstall=null;$('installBtn').style.display='none'});if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+persistLoad();updateHeader();updateCatalog();updateGoals();updatePeriodic();updateInspector();requestAnimationFrame(frame);
+</script>
+<script type="module">
+/* Optional Three.js GPU renderer, loaded from import map. Offline fallback is lattice_fallback.js. */
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const app=window.mineralAppState;
+const mount=document.getElementById('threeMount');
+let renderer,scene,camera,controls,crystal,atomObjects=[],lineObjects=[],outline;
+const tmp=new THREE.Object3D();
+let ready=false, lastKey='',lastEnabled=false;
+const palette=app.COLORS;
+function makeRenderer(){
+  if(!mount || !app)return;
+  try{
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+  }catch(e){console.warn('WebGL unavailable, 2D fallback is active.',e);return;}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.65;
+  renderer.setClearColor(0x152d3e,0);
+  renderer.domElement.setAttribute('aria-label','Three.js 3D 결정 격자');
+  mount.appendChild(renderer.domElement);
+  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x1c3749,.018);
+  camera=new THREE.PerspectiveCamera(43,1,.1,120);
+  camera.position.set(7,5.5,8);camera.lookAt(0,0,0);
+  scene.add(new THREE.HemisphereLight(0xd6f9ff,0x516177,2.7));
+  const key=new THREE.DirectionalLight(0xffffff,4.0);key.position.set(-6,9,8);scene.add(key);
+  const fill=new THREE.DirectionalLight(0x8ddffe,1.3);fill.position.set(8,-5,-2);scene.add(fill);
+  controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.08;
+  controls.enablePan=false;controls.minDistance=3.5;controls.maxDistance=22;controls.target.set(0,0,0);
+  crystal=new THREE.Group();scene.add(crystal);
+  controls.addEventListener('change',()=>{const v= new THREE.Vector3().copy(camera.position).sub(controls.target);const a=Math.atan2(v.x,v.z)*180/Math.PI;app.setOrbitAngle((a+360)%360)});
+  ready=true;
+  window.MineralThree={active:true,rebuild,reset,angle,setZoom};
+  window.dispatchEvent(new Event('mineral:three-ready'));
+  redraw();animate();
+}
+function disposeCrystal(){
+  if(!crystal)return;
+  while(crystal.children.length){const obj=crystal.children[0];crystal.remove(obj);obj.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}})}
+  atomObjects=[];lineObjects=[];
+}
+function rebuild(){
+  if(!ready)return;
+  const state=app.get();const s=state.structure;
+  if(!s)return;
+  const key=state.current.id+'-'+state.cellCount;
+  if(key!==lastKey){lastKey=key;disposeCrystal();
+    const cx=s.bounds/2;const groups=new Map();
+    s.atoms.forEach((p,i)=>{if(!groups.has(p.symbol))groups.set(p.symbol,[]);groups.get(p.symbol).push({p,i})});
+    for(const [symbol,nodes] of groups){
+      const geometry=new THREE.SphereGeometry(.155,20,14);
+      const material=new THREE.MeshPhysicalMaterial({color:palette[symbol]||'#9fcbd1',roughness:.23,metalness:symbol==='Pb'?.48:.12,clearcoat:.85,clearcoatRoughness:.14,emissive:palette[symbol]||'#a9ced3',emissiveIntensity:.055});
+      const mesh=new THREE.InstancedMesh(geometry,material,nodes.length);
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      mesh.userData={nodes,symbol};
+      atomObjects.push(mesh);crystal.add(mesh);
+    }
+    const edgeColor=0xb5edf0;
+    if(s.bonds.length){
+      const pts=[];for(const [a,b] of s.bonds){const u=s.atoms[a],v=s.atoms[b];pts.push(u.x-cx,u.y-cx,u.z-cx,v.x-cx,v.y-cx,v.z-cx)}
+      const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+      const lines=new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:edgeColor,transparent:true,opacity:.36,depthWrite:false}));
+      lineObjects.push(lines);crystal.add(lines);
+    }
+    const box=new THREE.BoxGeometry(s.bounds,s.bounds,s.bounds);
+    const edges=new THREE.EdgesGeometry(box);
+    outline=new THREE.LineSegments(edges,new THREE.LineDashedMaterial({color:0x83c3d0,dashSize:.07,gapSize:.045,transparent:true,opacity:.28}));
+    outline.computeLineDistances();crystal.add(outline);box.dispose();
+  }
+  const cameraD=6.5+state.cellCount*1.1;
+  controls.minDistance=3;controls.maxDistance=25;
+  const pos=new THREE.Vector3().copy(camera.position).sub(controls.target).normalize().multiplyScalar(cameraD/state.zoom);
+  camera.position.copy(pos);controls.update();
+}
+function redraw(){
+ if(!ready)return;
+ const s=app.get(),use3d=s.mode==='lattice';
+ mount.style.display=use3d?'block':'none';
+ document.getElementById('stageCanvas').style.display=use3d?'none':'block';
+ if(use3d && !lastEnabled){rebuild()}
+ lastEnabled=use3d;
+}
+function updateInstances(){
+ const st=app.get(),s=st.structure;if(!s)return;
+ const fraction=(st.phase==='forming')?Math.max(0.0001,st.grow/100):1;
+ const cutoff=fraction*1.12*s.bounds;
+ for(const mesh of atomObjects){const nodes=mesh.userData.nodes;
+   for(let i=0;i<nodes.length;i++){
+    const p=nodes[i].p;
+    const shown=st.phase!=='forming'||p.y<=cutoff;
+    tmp.position.set(p.x-s.bounds/2,p.y-s.bounds/2,p.z-s.bounds/2);
+    const scale=shown?1:.00001;tmp.scale.setScalar(scale);tmp.updateMatrix();mesh.setMatrixAt(i,tmp.matrix);
+   }
+   mesh.instanceMatrix.needsUpdate=true;
+ }
+ for(const l of lineObjects)l.visible=st.showBonds&&st.phase!=='forming';
+ if(outline)outline.visible=st.showAxes;
+}
+function angle(deg){if(!ready)return;const r=(camera.position.length()||8);const elevation=Math.asin(camera.position.y/r);const rad=deg*Math.PI/180;camera.position.set(r*Math.sin(rad)*Math.cos(elevation),r*Math.sin(elevation),r*Math.cos(rad)*Math.cos(elevation));controls.update()}
+function setZoom(value){if(!ready)return;const st=app.get();const v=new THREE.Vector3().copy(camera.position).sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(v,(6.5+st.cellCount*1.1)/value);controls.update()}
+function reset(){if(!ready)return;camera.position.set(7,5.5,8);controls.target.set(0,0,0);controls.update();setZoom(1)}
+let oldW=0,oldH=0;
+function animate(){requestAnimationFrame(animate);if(!ready||app.get().mode!=='lattice')return;
+ const rect=mount.getBoundingClientRect();if(rect.width<2||rect.height<2)return;
+ const w=Math.floor(rect.width),h=Math.floor(rect.height);
+ if(w!==oldW||h!==oldH){oldW=w;oldH=h;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+ const st=app.get();if(st.autoSpin && st.phase!=='forming'){crystal.rotation.y+=.003*st.speed}
+ updateInstances();controls.update();renderer.render(scene,camera)
+}
+window.addEventListener('mineral:updated',()=>{if(!ready)return;rebuild();redraw()});
+window.addEventListener('mineral:mode',redraw);
+makeRenderer();
+
+</script>
+</body>
+</html>
