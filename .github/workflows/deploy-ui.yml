@@ -21,7 +21,7 @@ jobs:
       - name: Stage app without awaiting COD service
         run: |
           mkdir -p _site
-          cp index.html manifest.webmanifest cod_crystals.js _site/
+          cp index.html manifest.webmanifest cod_crystals.js mineral_models.js _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
