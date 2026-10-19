@@ -52,7 +52,7 @@
  </aside>
  <main class="main-col">
   <div class="main-heading"><div><span class="eyebrow">01 · 실험 대상 광물</span><h1 id="mineralTitle">능망간석</h1></div><div class="formula-pill" id="mineralFormula">MnCO₃</div></div>
-  <div class="stage-tabs" role="tablist"><button id="atomsTab" class="active" aria-selected="true">원자 배열</button><button id="crystalTab" aria-selected="false">완성 광물</button><button id="latticeTab" aria-selected="false">3D 결정 격자</button></div>
+  <div class="stage-tabs" role="tablist"><button id="atomsTab" class="active" aria-selected="true">원자 배열</button><button id="crystalTab" aria-selected="false">✨ 광물 외형 3D</button><button id="latticeTab" aria-selected="false">3D 결정 격자</button></div>
   <section class="stage-wrap" id="stageWrap" aria-label="원자와 결정 시뮬레이션"><canvas id="stageCanvas"></canvas><div id="threeMount" aria-label="Three.js 원자 구조 3D 화면"></div><div class="stage-status"><span class="status-light"></span><span id="stageStatus">재료를 기다리는 중</span></div><div class="stage-tag" id="stageTag">조성 비율 반복 모형</div><div class="stage-empty" id="stageEmpty"><h3>작은 원자들이 만날 자리</h3><p id="emptyText">주기율표에서 원자를 골라 볼까요?</p></div><div class="stage-footer" id="stageFooter">원자를 모은 뒤 결정 만들기를 눌러요. 관찰한 모드도 사용할 수 있어요.</div></section>
   <div id="touchLab" class="touch-lab" aria-label="원자 터치 결합 실험"><span class="touch-label">TOUCH BOND LAB · 아이패드 원자 결합 실험</span><p>아래 원소를 눌러 추가한 후, 위 원자 화면에서 원자를 손가락으로 끌어 다른 원자 가까이 놓아 보세요. 연결선은 거리 기반 교육용 표현이며 실제 화학 반응은 아닙니다.</p><div id="touchTray" class="touch-tray"></div><button id="separateAtomsBtn" class="touch-reset" type="button">원자 펼치기 ↗</button></div><div class="stage-controls"><div class="range-set"><label for="rotationRange">회전</label><input type="range" id="rotationRange" min="0" max="360" value="25" aria-label="모형 회전"><span class="value-readout" id="rotateValue">25°</span></div><button class="stage-reset" id="resetViewBtn" title="보기 초기화">↺ 보기 초기화</button><div class="range-set right"><label for="zoomRange">확대</label><input type="range" id="zoomRange" min="55" max="170" value="100" aria-label="모형 확대"><span class="value-readout" id="zoomValue">100%</span></div></div>
   <div class="lattice-toolbar" aria-label="3D 격자 관찰 설정"><span class="lattice-badge" id="accuracyBadge">좌표 검증 중</span>
@@ -73,6 +73,7 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <div id="guideModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="modal"><button class="modal-close" id="modalClose" aria-label="닫기">×</button><span class="section-kicker">LAB TUTORIAL</span><h2 id="guideTitle">광물 실험실 이용 가이드</h2><p>직접 원소를 조합하여 광물의 화학식과 결정 형성을 배워 보세요.</p><ol><li>왼쪽 도감에서 만들고 싶은 <b>광물</b>을 선택합니다.</li><li>아래 <b>주기율표</b>에서 필요한 원소를 눌러 원자 수를 모읍니다. ＋/－로 세밀하게 조절할 수도 있습니다.</li><li>필요한 원자가 모두 모이면 <b>결정 만들기</b>를 눌러 단위격자 층이 나타나는 교육용 성장 애니메이션을 관찰합니다.</li><li><b>완성 광물</b> 탭에서 결정 모형을 자유롭게 회전하고 확대할 수 있습니다.</li><li>새 광물을 발견하면 도감에 기록이 남습니다.</li></ol><p style="font-size:11px;color:#9aaaa3">※ 이 앱은 영상의 사용 경험을 재구성한 독립적인 교육용 시뮬레이터입니다. 실제 원자 좌표가 검증된 광물만 결정학 모델로 표시됩니다. 미검증 광물은 조성 개념도로 구분합니다. 성장 속도는 실제 화학반응의 속도가 아닙니다.</p><button id="startGuideBtn" class="primary-btn modal-cta">실험 시작하기 →</button></div></div>
 <script src="./cod_crystals.js"></script>
+<script src="./mineral_models.js"></script>
 <script>
 /* MINERAL LAB 2.0 - crystallographic prototypes.
    Fractional coordinates are conventional unit-cell coordinates, not pixels.
@@ -297,7 +298,7 @@ function setMode(target){
   for(const [id,m] of [['atomsTab','atoms'],['crystalTab','crystal'],['latticeTab','lattice']]){
     $(id).classList.toggle('active',mode===m);$(id).setAttribute('aria-selected',String(mode===m));
   }
-  $('stageTag').textContent=mode==='lattice'?(latticeStructure().accurate?'실측 좌표 · 3D 격자':'조성 개념도 · 비실측'):mode==='crystal'?'결정 외형 · 교육용 모형':'조성 비율 · 움직이는 원자';
+  $('stageTag').textContent=mode==='lattice'?(latticeStructure().accurate?'실측 좌표 · 3D 격자':'조성 개념도 · 비실측'):mode==='crystal'?'결정 습성 기반 3D 광물 표본 · 실측 스캔 아님':'조성 비율 · 움직이는 원자';
   $('stageWrap').style.touchAction=mode==='lattice'?'none':'pan-y';
   updateGoals();window.dispatchEvent(new Event('mineral:mode'));
 }
@@ -321,7 +322,7 @@ if(phase!=='done')for(const p of particles){let px=p.x-cx,py=p.y-cy;let orbit=.5
 if(phase==='forming'){let sparkleCount=12;for(let i=0;i<sparkleCount;i++){const a=i*6.28/sparkleCount+time*.00034,rad=(70+Math.sin(time*.001+i)*22)*scale;sc.fillStyle=`rgba(184,241,237,${.5+.4*Math.sin(time*.004+i)})`;sc.beginPath();sc.arc(cx+Math.cos(a)*rad*1.8,cy+Math.sin(a)*rad*1.4,1.8,0,7);sc.fill()}}}
 else if(particles.length){sc.strokeStyle='rgba(109,238,205,.67)';sc.lineWidth=2.8;for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){let a=particles[i],b=particles[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<115){sc.globalAlpha=1-d/115;sc.beginPath();sc.moveTo(a.x,a.y);sc.lineTo(b.x,b.y);sc.stroke()}}sc.globalAlpha=1;for(let p of particles){if(p.anchored||p===draggedParticle){drawAtom(sc,p.x,p.y,p.r*zoom*.9,p.s,1.5);continue}p.vx+=((cx-p.x)*.000014+Math.sin(time*.0007+p.phase)*.0006)*dt;p.vy+=((cy-p.y)*.000012+Math.cos(time*.0006+p.phase)*.0006)*dt;let damp=.985;p.vx=clamp(p.vx*damp,-.8,.8);p.vy=clamp(p.vy*damp,-.8,.8);p.x+=p.vx*dt*.065;p.y+=p.vy*dt*.065;if(p.x<23||p.x>w-23)p.vx*=-1;if(p.y<35||p.y>h-24)p.vy*=-1;drawAtom(sc,p.x,p.y,p.r*zoom*.9,p.s)}}
 }
-if(phase==='forming'){grow=clamp(grow+dt*.027*speed,0,100);$('growFill').style.width=`${grow}%`;$('growPercent').textContent=`${Math.floor(grow)}%`;if(grow>=100){phase='done';mode='lattice';if(!progressSaved.includes(current.id)){progressSaved.push(current.id);persistSave();toast(`새로운 광물 발견! ${current.name} 도감에 등록했어요.`)}else toast(`${current.name} 결정이 완성되었어요!`);$('growProgress').style.display='none';setMode('lattice');updateHeader();updateCatalog();updateGoals();updateInspector();updatePeriodic();}}
+if(phase==='forming'){grow=clamp(grow+dt*.027*speed,0,100);$('growFill').style.width=`${grow}%`;$('growPercent').textContent=`${Math.floor(grow)}%`;if(grow>=100){phase='done';mode='crystal';if(!progressSaved.includes(current.id)){progressSaved.push(current.id);persistSave();toast(`새로운 광물 발견! ${current.name} 도감에 등록했어요.`)}else toast(`${current.name} 결정이 완성되었어요!`);$('growProgress').style.display='none';setMode('crystal');updateHeader();updateCatalog();updateGoals();updateInspector();updatePeriodic();}}
 }
 function drawBohr(time){bohrSize=resizeCanvas(bohr,bc);const {w,h}=bohrSize;bc.clearRect(0,0,w,h);let e=E[selected];if(!e)return;let shell=electronShells(e).slice(0,7),cx=w/2,cy=h/2-9,outer=Math.min(w,h)*.4,maxR=outer;bc.save();for(let j=0;j<shell.length;j++){let r=maxR*(j+1)/shell.length;bc.strokeStyle='#a5c4d53d';bc.lineWidth=1.4;bc.beginPath();bc.arc(cx,cy,r,0,7);bc.stroke();let count=shell[j];for(let k=0;k<count;k++){let ang=k*Math.PI*2/count+(time*.00018*(j%2?-1:1))+.65*j;let ex=cx+Math.cos(ang)*r,ey=cy+Math.sin(ang)*r;bc.shadowBlur=6;bc.shadowColor='#c1f8ff';bc.fillStyle='#c8f4fa';bc.beginPath();bc.arc(ex,ey,count>16?2.3:3,0,7);bc.fill()}}bc.shadowBlur=12;bc.shadowColor='#f8b48c';for(let i=0;i<Math.min(e.n,17);i++){let ang=i*2.39996,timeOffset=time*.00004*(i%2?1:-1),rad=Math.sqrt((i+.6)/Math.min(e.n,17))*13;bc.fillStyle=i%2?'#f5b27d':'#e9a1d6';bc.beginPath();bc.arc(cx+Math.cos(ang+timeOffset)*rad,cy+Math.sin(ang+timeOffset)*rad,4,0,7);bc.fill()}bc.shadowBlur=0;bc.restore()}
 function frame(now){let dt=lastTick?Math.min(now-lastTick,52):16;lastTick=now;drawStage(now,dt);drawBohr(now);requestAnimationFrame(frame)}
@@ -331,8 +332,8 @@ $('cellCount').addEventListener('change',e=>{cellCount=CrystalData.validCells(e.
 $('bondToggle').addEventListener('change',e=>{showBonds=e.target.checked;window.dispatchEvent(new Event('mineral:updated'))});
 $('axesToggle').addEventListener('change',e=>{showAxes=e.target.checked;window.dispatchEvent(new Event('mineral:updated'))});
 $('spinToggle').addEventListener('change',e=>{autoSpin=e.target.checked});
-window.mineralAppState={COLORS,get:()=>({current,phase,grow,mode,zoom,speed,cellCount,showBonds,showAxes,autoSpin,structure:latticeStructure()}),setOrbitAngle:angle=>{if(mode!=='lattice')return;rotation=angle;$('rotationRange').value=Math.round(angle);$('rotateValue').textContent=`${Math.round(angle)}°`;}};
-window.addEventListener('mineral:three-ready',()=>{if(mode==='lattice')window.dispatchEvent(new Event('mineral:mode'));});
+window.mineralAppState={COLORS,get:()=>({current,phase,grow,mode,zoom,speed,cellCount,showBonds,showAxes,autoSpin,structure:latticeStructure()}),setOrbitAngle:angle=>{if(mode!=='lattice'&&mode!=='crystal')return;rotation=angle;$('rotationRange').value=Math.round(angle);$('rotateValue').textContent=`${Math.round(angle)}°`;}};
+window.addEventListener('mineral:three-ready',()=>{if(mode==='lattice'||mode==='crystal')window.dispatchEvent(new Event('mineral:mode'));});
 $('onlyNeeded').addEventListener('change',updatePeriodic);$('elementSearch').addEventListener('input',updatePeriodic);$('speedSelect').addEventListener('change',ev=>{speed=Number(ev.target.value)});
 $('rotationRange').addEventListener('input',ev=>{rotation=Number(ev.target.value);$('rotateValue').textContent=`${rotation}°`;window.MineralThree?.angle(rotation)});$('zoomRange').addEventListener('input',ev=>{zoom=Number(ev.target.value)/100;$('zoomValue').textContent=`${Math.round(zoom*100)}%`;window.MineralThree?.setZoom(zoom)});$('resetViewBtn').addEventListener('click',()=>{rotation=25;zoom=1;$('rotationRange').value=25;$('zoomRange').value=100;$('rotateValue').textContent='25°';$('zoomValue').textContent='100%';pitch=25;window.MineralThree?.reset()});
 let draggedParticle=null,draggedPointer=null,dragOffset={x:0,y:0};
@@ -343,8 +344,8 @@ stage.addEventListener('pointerdown',e=>{
  if(nearest){draggedParticle=nearest;draggedPointer=e.pointerId;dragOffset={x:q.x-nearest.x,y:q.y-nearest.y};nearest.vx=nearest.vy=0;stage.setPointerCapture(e.pointerId);stage.classList.add('dragging');e.preventDefault();return}}
  pointerStart={x:e.clientX,y:e.clientY,rotation,pitch};stage.setPointerCapture(e.pointerId);
 });
-stage.addEventListener('pointermove',e=>{if(draggedParticle&&e.pointerId===draggedPointer){const q=canvasXY(e);draggedParticle.x=clamp(q.x-dragOffset.x,23,Math.max(24,stageSize.w-23));draggedParticle.y=clamp(q.y-dragOffset.y,40,Math.max(41,stageSize.h-30));e.preventDefault();return}if(pointerStart){rotation=((pointerStart.rotation+(e.clientX-pointerStart.x)*.75)%360+360)%360;$('rotationRange').value=rotation;$('rotateValue').textContent=Math.round(rotation)+'°';if(mode==='lattice')pitch=clamp(pointerStart.pitch+(e.clientY-pointerStart.y)*.5,-75,75)}});
-function endDrag(e){if(draggedParticle&&e.pointerId===draggedPointer){const q=draggedParticle;const near=particles.find(p=>p!==q&&Math.hypot(p.x-q.x,p.y-q.y)<85);q.anchored=true;if(near){near.anchored=true;toast(q.s+'–'+near.s+' 원자가 가까워졌어요! (교육용 연결)')}draggedParticle=null;draggedPointer=null;stage.classList.remove('dragging')}pointerStart=null}
+stage.addEventListener('pointermove',e=>{if(draggedParticle&&e.pointerId===draggedPointer){const q=canvasXY(e);draggedParticle.x=clamp(q.x-dragOffset.x,23,Math.max(24,stageSize.w-23));draggedParticle.y=clamp(q.y-dragOffset.y,40,Math.max(41,stageSize.h-30));e.preventDefault();return}if(pointerStart){rotation=((pointerStart.rotation+(e.clientX-pointerStart.x)*.75)%360+360)%360;$('rotationRange').value=rotation;$('rotateValue').textContent=Math.round(rotation)+'°';if(mode==='lattice'||mode==='crystal')pitch=clamp(pointerStart.pitch+(e.clientY-pointerStart.y)*.5,-75,75)}});
+function endDrag(e){if(draggedParticle&&e.pointerId===draggedPointer){const q=draggedParticle;const near=particles.find(p=>p!==q&&Math.hypot(p.x-q.x,p.y-q.y)<85);q.anchored=true;if(near){near.anchored=true;const typ=window.MineralMorphology?.kindOf(current,q.s,near.s)||'proximity';const names={ionic:'이온 결합 성격',covalent:'공유 결합 성격',mixed:'혼합·복합 결합 성격',proximity:'근접한 원자'};toast(q.s+'–'+near.s+': '+names[typ]+' (거리 기반 교육용 모형)')}draggedParticle=null;draggedPointer=null;stage.classList.remove('dragging')}pointerStart=null}
 stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
 $('separateAtomsBtn').addEventListener('click',()=>{if(phase==='forming')return;for(const p of particles){p.anchored=false;p.vx=(Math.random()-.5)*3;p.vy=(Math.random()-.5)*3}toast('원자를 다시 움직이게 했어요.')});
 stage.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();zoom=clamp(zoom-e.deltaY*.001,.55,1.7);$('zoomRange').value=Math.round(zoom*100);$('zoomValue').textContent=Math.round(zoom*100)+'%'},{passive:false});
@@ -360,7 +361,8 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
 const app=window.mineralAppState;
 const mount=document.getElementById('threeMount');
-let renderer,scene,camera,controls,crystal,atomObjects=[],lineObjects=[],outline;
+let renderer,scene,camera,controls,crystal,atomObjects=[],lineObjects=[],outline,specimen=null;
+let specimenKey='';
 const tmp=new THREE.Object3D();
 let ready=false, lastKey='',lastEnabled=false;
 const palette=app.COLORS;
@@ -372,14 +374,14 @@ function makeRenderer(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.65;
+  renderer.toneMappingExposure=1.4;
   renderer.setClearColor(0x152d3e,0);
   renderer.domElement.setAttribute('aria-label','Three.js 3D 결정 격자');
   mount.appendChild(renderer.domElement);
   scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x1c3749,.018);
   camera=new THREE.PerspectiveCamera(43,1,.1,120);
   camera.position.set(7,5.5,8);camera.lookAt(0,0,0);
-  scene.add(new THREE.HemisphereLight(0xd6f9ff,0x516177,2.7));
+  scene.add(new THREE.HemisphereLight(0xd6f9ff,0x516177,2.0));
   const key=new THREE.DirectionalLight(0xffffff,4.0);key.position.set(-6,9,8);scene.add(key);
   const fill=new THREE.DirectionalLight(0x8ddffe,1.3);fill.position.set(8,-5,-2);scene.add(fill);const rim=new THREE.DirectionalLight(0x76efcc,2.6);rim.position.set(2,7,-7);scene.add(rim);
   controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.08;
@@ -393,6 +395,7 @@ function makeRenderer(){
 }
 function disposeCrystal(){
   if(!crystal)return;
+  specimen=null;specimenKey='';
   while(crystal.children.length){const obj=crystal.children[0];crystal.remove(obj);obj.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}})}
   atomObjects=[];lineObjects=[];
 }
@@ -424,6 +427,11 @@ function rebuild(){
     outline=new THREE.LineSegments(edges,new THREE.LineDashedMaterial({color:0x83c3d0,dashSize:.07,gapSize:.045,transparent:true,opacity:.28}));
     outline.computeLineDistances();crystal.add(outline);box.dispose();
   }
+  if(window.MineralMorphology&&specimenKey!==state.current.id){
+    if(specimen){crystal.remove(specimen);specimen.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})}
+    specimen=window.MineralMorphology.create(THREE,state.current);
+    crystal.add(specimen);specimenKey=state.current.id;
+  }
   const cameraD=6.5+state.cellCount*1.1;
   controls.minDistance=3;controls.maxDistance=25;
   const pos=new THREE.Vector3().copy(camera.position).sub(controls.target).normalize().multiplyScalar(cameraD/state.zoom);
@@ -431,10 +439,10 @@ function rebuild(){
 }
 function redraw(){
  if(!ready)return;
- const s=app.get(),use3d=s.mode==='lattice';
+ const s=app.get(),use3d=s.mode==='lattice'||s.mode==='crystal';
  mount.style.display=use3d?'block':'none';
  document.getElementById('stageCanvas').style.display=use3d?'none':'block';
- if(use3d && !lastEnabled){rebuild()}
+ if(use3d){rebuild()}
  lastEnabled=use3d;
 }
 function updateInstances(){
@@ -446,26 +454,31 @@ function updateInstances(){
     const p=nodes[i].p;
     const shown=st.phase!=='forming'||p.y<=cutoff;
     tmp.position.set(p.x-s.bounds/2,p.y-s.bounds/2,p.z-s.bounds/2);
-    const scale=shown?1:.00001;tmp.scale.setScalar(scale);tmp.updateMatrix();mesh.setMatrixAt(i,tmp.matrix);
+    const emerging=st.phase==='forming'&&st.grow>56;const dissolve=emerging?Math.max(.00001,1-(st.grow-56)/44):1;
+    const scale=shown?dissolve:.00001;tmp.scale.setScalar(scale);tmp.updateMatrix();mesh.setMatrixAt(i,tmp.matrix);
    }
    mesh.instanceMatrix.needsUpdate=true;
  }
- for(const l of lineObjects)l.visible=st.showBonds&&st.phase!=='forming';
- if(outline)outline.visible=st.showAxes;
+ const morph=(st.mode==='crystal'||(st.phase==='forming'&&st.grow>56));
+ const reveal=st.phase==='forming'?Math.max(0,(st.grow-56)/44):1;
+ if(specimen){specimen.visible=morph;const easing=reveal*reveal*(3-2*reveal);specimen.scale.setScalar(morph?Math.max(.001,easing*1.08):.00001)}
+ for(const m of atomObjects)m.visible=!morph||st.phase==='forming';
+ for(const l of lineObjects)l.visible=!morph&&st.showBonds&&st.phase!=='forming';
+ if(outline)outline.visible=!morph&&st.showAxes;
 }
 function angle(deg){if(!ready)return;const r=(camera.position.length()||8);const elevation=Math.asin(camera.position.y/r);const rad=deg*Math.PI/180;camera.position.set(r*Math.sin(rad)*Math.cos(elevation),r*Math.sin(elevation),r*Math.cos(rad)*Math.cos(elevation));controls.update()}
 function setZoom(value){if(!ready)return;const st=app.get();const v=new THREE.Vector3().copy(camera.position).sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(v,(6.5+st.cellCount*1.1)/value);controls.update()}
 function reset(){if(!ready)return;camera.position.set(7,5.5,8);controls.target.set(0,0,0);controls.update();setZoom(1)}
 let oldW=0,oldH=0;
-function animate(){requestAnimationFrame(animate);if(!ready||app.get().mode!=='lattice')return;
+function animate(){requestAnimationFrame(animate);if(!ready||!['lattice','crystal'].includes(app.get().mode))return;
  const rect=mount.getBoundingClientRect();if(rect.width<2||rect.height<2)return;
  const w=Math.floor(rect.width),h=Math.floor(rect.height);
  if(w!==oldW||h!==oldH){oldW=w;oldH=h;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
- const st=app.get();if(st.autoSpin && st.phase!=='forming'){crystal.rotation.y+=.003*st.speed}
+ const st=app.get();if(st.autoSpin){crystal.rotation.y+=.003*st.speed}
  updateInstances();controls.update();renderer.render(scene,camera)
 }
 window.addEventListener('mineral:updated',()=>{if(!ready)return;rebuild();redraw()});
-window.addEventListener('mineral:mode',redraw);
+window.addEventListener('mineral:mode',()=>{rebuild();redraw()});
 makeRenderer();
 
 </script>
