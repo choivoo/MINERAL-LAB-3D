@@ -53,8 +53,8 @@
       "sites": 16
     },
     "cuprite": {
-      "source": "https://www.crystallography.net/cod/1010941.cif",
-      "sourceId": 1010941,
+      "source": "https://www.crystallography.net/cod/1000063.cif",
+      "sourceId": 1000063,
       "sites": 6
     },
     "malachite": {
@@ -68,8 +68,8 @@
       "sites": 30
     },
     "quartz": {
-      "source": "https://www.crystallography.net/cod/1011172.cif",
-      "sourceId": 1011172,
+      "source": "https://www.crystallography.net/cod/9011495.cif",
+      "sourceId": 9011495,
       "sites": 9
     },
     "hematite": {
@@ -113,13 +113,6 @@
       "sites": 128
     }
   },
-  "unverified": {
-    "pyrite": "No COD candidates",
-    "sylvite": "No COD candidates",
-    "halite": "No COD candidates",
-    "malachite": "No COD candidates",
-    "azurite": "No COD candidates",
-    "gypsum": "5000039: Formula mismatch: {'Ca': 4, 'S': 4, 'O': 24}"
-  },
+  "unverified": {},
   "note": "Verified CIF atomic sites; mineral shapes remain representative procedural habits, not measured scans."
 }
